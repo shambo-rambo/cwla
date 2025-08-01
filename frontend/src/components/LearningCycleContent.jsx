@@ -34,13 +34,14 @@ const LearningCycleContent = ({ user, onLogout }) => {
   return (
     <div style={{ 
       minHeight: '100vh',
-      backgroundColor: '#f8fafc',
-      fontFamily: 'Arial, sans-serif'
+      backgroundColor: '#292828',
+      fontFamily: 'Arial, sans-serif',
+      color: '#ffffff'
     }}>
       {/* Header */}
       <div style={{
-        backgroundColor: 'white',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        backgroundColor: '#3a3939',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
         padding: '1rem 0'
       }}>
         <div style={{ 
@@ -51,7 +52,7 @@ const LearningCycleContent = ({ user, onLogout }) => {
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1e40af' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#49a2d4' }}>
             Teaching Cycle AI
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -61,19 +62,21 @@ const LearningCycleContent = ({ user, onLogout }) => {
               style={{ 
                 borderRadius: '50%', 
                 width: '40px', 
-                height: '40px' 
+                height: '40px',
+                border: '2px solid #49a2d4'
               }} 
             />
-            <span style={{ fontWeight: '500' }}>{user.displayName}</span>
+            <span style={{ fontWeight: '500', color: '#ffffff' }}>{user.displayName}</span>
             <button 
               onClick={onLogout}
               style={{
                 padding: '8px 16px',
-                backgroundColor: '#dc2626',
+                backgroundColor: '#49a2d4',
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fontWeight: '500'
               }}
             >
               Sign Out
@@ -89,14 +92,14 @@ const LearningCycleContent = ({ user, onLogout }) => {
           <h2 style={{ 
             fontSize: '3rem', 
             fontWeight: 'bold', 
-            color: '#1f2937',
+            color: '#ffffff',
             marginBottom: '1rem'
           }}>
             Welcome to Your Teaching Dashboard
           </h2>
           <p style={{ 
             fontSize: '1.25rem', 
-            color: '#6b7280',
+            color: '#a6a6a6',
             maxWidth: '600px',
             margin: '0 auto'
           }}>
@@ -111,7 +114,7 @@ const LearningCycleContent = ({ user, onLogout }) => {
             fontWeight: 'bold', 
             textAlign: 'center',
             marginBottom: '2rem',
-            color: '#1f2937'
+            color: '#49a2d4'
           }}>
             The Teaching & Learning Cycle
           </h3>
@@ -125,11 +128,11 @@ const LearningCycleContent = ({ user, onLogout }) => {
               <div 
                 key={index}
                 style={{
-                  backgroundColor: 'white',
+                  backgroundColor: '#3a3939',
                   padding: '1.5rem',
                   borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  border: '1px solid #e5e7eb'
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                  border: '1px solid #404040'
                 }}
               >
                 <div style={{
@@ -139,15 +142,12 @@ const LearningCycleContent = ({ user, onLogout }) => {
                   fontSize: '0.875rem',
                   fontWeight: '600',
                   marginBottom: '1rem',
-                  ...(index === 0 && { backgroundColor: '#dbeafe', color: '#1e40af' }),
-                  ...(index === 1 && { backgroundColor: '#dcfce7', color: '#166534' }),
-                  ...(index === 2 && { backgroundColor: '#fef3c7', color: '#92400e' }),
-                  ...(index === 3 && { backgroundColor: '#e9d5ff', color: '#7c2d12' }),
-                  ...(index === 4 && { backgroundColor: '#fecaca', color: '#991b1b' })
+                  backgroundColor: '#49a2d4',
+                  color: '#ffffff'
                 }}>
                   {stage.stage}
                 </div>
-                <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
+                <p style={{ color: '#a6a6a6', lineHeight: '1.6' }}>
                   {stage.description}
                 </p>
               </div>
@@ -157,22 +157,23 @@ const LearningCycleContent = ({ user, onLogout }) => {
 
         {/* Chatbot Action Section */}
         <div style={{
-          backgroundColor: 'white',
+          backgroundColor: '#3a3939',
           padding: '2rem',
           borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          textAlign: 'center'
+          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+          textAlign: 'center',
+          border: '1px solid #404040'
         }}>
           <h3 style={{ 
             fontSize: '1.5rem', 
             fontWeight: 'bold',
             marginBottom: '1rem',
-            color: '#1f2937'
+            color: '#49a2d4'
           }}>
             AI Teaching Assistants
           </h3>
           <p style={{ 
-            color: '#6b7280',
+            color: '#a6a6a6',
             marginBottom: '2rem'
           }}>
             Get expert guidance on teaching frameworks and create detailed lesson plans
@@ -190,14 +191,18 @@ const LearningCycleContent = ({ user, onLogout }) => {
               style={{
                 padding: '1rem 1.5rem',
                 fontSize: '1rem',
-                backgroundColor: '#059669',
+                backgroundColor: '#49a2d4',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontWeight: '600',
-                textAlign: 'left'
+                textAlign: 'left',
+                transition: 'all 0.2s',
+                boxShadow: '0 2px 4px rgba(73, 162, 212, 0.3)'
               }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#4a92c4'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#49a2d4'}
             >
               <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
                 🎯 Framework Analysis
@@ -212,14 +217,18 @@ const LearningCycleContent = ({ user, onLogout }) => {
               style={{
                 padding: '1rem 1.5rem',
                 fontSize: '1rem',
-                backgroundColor: '#dc2626',
+                backgroundColor: '#1e3a52',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontWeight: '600',
-                textAlign: 'left'
+                textAlign: 'left',
+                transition: 'all 0.2s',
+                boxShadow: '0 2px 4px rgba(30, 58, 82, 0.3)'
               }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#2a4a6b'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#1e3a52'}
             >
               <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
                 📝 Lesson Planner

@@ -62,28 +62,29 @@ const Chatbot = ({ type, title, description, onClose }) => {
       padding: '1rem'
     }}>
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: '#3a3939',
         borderRadius: '8px',
         width: '100%',
         maxWidth: '800px',
         height: '80vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+        border: '1px solid #404040'
       }}>
         {/* Header */}
         <div style={{
           padding: '1.5rem',
-          borderBottom: '1px solid #e5e7eb',
+          borderBottom: '1px solid #404040',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
           <div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, color: '#1f2937' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, color: '#49a2d4' }}>
               {title}
             </h3>
-            <p style={{ color: '#6b7280', margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
+            <p style={{ color: '#a6a6a6', margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
               {description}
             </p>
           </div>
@@ -95,7 +96,7 @@ const Chatbot = ({ type, title, description, onClose }) => {
               border: 'none',
               fontSize: '1.5rem',
               cursor: 'pointer',
-              color: '#6b7280'
+              color: '#a6a6a6'
             }}
           >
             ×
@@ -114,7 +115,7 @@ const Chatbot = ({ type, title, description, onClose }) => {
           {messages.length === 0 && (
             <div style={{
               textAlign: 'center',
-              color: '#6b7280',
+              color: '#a6a6a6',
               fontSize: '0.9rem',
               padding: '2rem'
             }}>
@@ -138,11 +139,12 @@ const Chatbot = ({ type, title, description, onClose }) => {
                   maxWidth: '70%',
                   padding: '0.75rem 1rem',
                   borderRadius: '8px',
-                  backgroundColor: message.role === 'user' ? '#2563eb' : '#f3f4f6',
-                  color: message.role === 'user' ? 'white' : '#1f2937',
+                  backgroundColor: message.role === 'user' ? '#49a2d4' : '#292828',
+                  color: message.role === 'user' ? 'white' : '#ffffff',
                   whiteSpace: 'pre-wrap',
                   fontSize: '0.9rem',
-                  lineHeight: '1.5'
+                  lineHeight: '1.5',
+                  border: message.role === 'assistant' ? '1px solid #404040' : 'none'
                 }}
               >
                 {message.content}
@@ -158,9 +160,10 @@ const Chatbot = ({ type, title, description, onClose }) => {
               <div style={{
                 padding: '0.75rem 1rem',
                 borderRadius: '8px',
-                backgroundColor: '#f3f4f6',
-                color: '#6b7280',
-                fontSize: '0.9rem'
+                backgroundColor: '#292828',
+                color: '#a6a6a6',
+                fontSize: '0.9rem',
+                border: '1px solid #404040'
               }}>
                 Thinking...
               </div>
@@ -171,7 +174,7 @@ const Chatbot = ({ type, title, description, onClose }) => {
         {/* Input */}
         <div style={{
           padding: '1rem',
-          borderTop: '1px solid #e5e7eb',
+          borderTop: '1px solid #404040',
           display: 'flex',
           gap: '0.5rem'
         }}>
@@ -186,12 +189,14 @@ const Chatbot = ({ type, title, description, onClose }) => {
             style={{
               flex: 1,
               padding: '0.75rem',
-              border: '1px solid #d1d5db',
+              border: '1px solid #404040',
               borderRadius: '6px',
               resize: 'none',
               minHeight: '80px',
               fontFamily: 'inherit',
-              fontSize: '0.9rem'
+              fontSize: '0.9rem',
+              backgroundColor: '#292828',
+              color: '#ffffff'
             }}
             disabled={isLoading}
           />
@@ -200,7 +205,7 @@ const Chatbot = ({ type, title, description, onClose }) => {
             disabled={isLoading || !inputMessage.trim()}
             style={{
               padding: '0.75rem 1.5rem',
-              backgroundColor: isLoading || !inputMessage.trim() ? '#9ca3af' : '#2563eb',
+              backgroundColor: isLoading || !inputMessage.trim() ? '#404040' : '#49a2d4',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
