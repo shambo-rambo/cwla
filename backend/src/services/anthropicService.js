@@ -1,5 +1,9 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
+// Debug: Check if API key exists
+console.log('Anthropic API Key exists:', !!process.env.ANTHROPIC_API_KEY);
+console.log('API Key length:', process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.length : 'undefined');
+
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
@@ -44,7 +48,7 @@ Keep your response structured, practical, and focused on actionable advice for e
       console.error('Anthropic API Error:', error);
       return {
         success: false,
-        error: 'Failed to generate framework analysis'
+        error: `Failed to generate framework analysis: ${error.message}`
       };
     }
   }
@@ -119,7 +123,7 @@ Make it practical, detailed, and immediately usable by teachers.`;
       console.error('Anthropic API Error:', error);
       return {
         success: false,
-        error: 'Failed to generate lesson plan'
+        error: `Failed to generate lesson plan: ${error.message}`
       };
     }
   }
