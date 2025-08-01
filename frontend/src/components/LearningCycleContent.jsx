@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Chatbot from './Chatbot';
 
 const LearningCycleContent = ({ user, onLogout }) => {
+  const [activeChatbot, setActiveChatbot] = useState(null);
   const cycleStages = [
     {
       stage: "1. Engage",
@@ -153,7 +155,7 @@ const LearningCycleContent = ({ user, onLogout }) => {
           </div>
         </div>
 
-        {/* Action Section */}
+        {/* Chatbot Action Section */}
         <div style={{
           backgroundColor: 'white',
           padding: '2rem',
@@ -167,28 +169,87 @@ const LearningCycleContent = ({ user, onLogout }) => {
             marginBottom: '1rem',
             color: '#1f2937'
           }}>
-            Ready to Start Planning?
+            AI Teaching Assistants
           </h3>
           <p style={{ 
             color: '#6b7280',
             marginBottom: '2rem'
           }}>
-            Create engaging, structured lessons that follow best teaching practices
+            Get expert guidance on teaching frameworks and create detailed lesson plans
           </p>
-          <button style={{
-            padding: '12px 24px',
-            fontSize: '1.1rem',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontWeight: '600'
+          
+          <div style={{
+            display: 'grid',
+            gap: '1rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            maxWidth: '700px',
+            margin: '0 auto'
           }}>
-            Create New Lesson Plan
-          </button>
+            <button 
+              onClick={() => setActiveChatbot('framework')}
+              style={{
+                padding: '1rem 1.5rem',
+                fontSize: '1rem',
+                backgroundColor: '#059669',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                textAlign: 'left'
+              }}
+            >
+              <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                🎯 Framework Analysis
+              </div>
+              <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+                Get expert advice on teaching strategies and pedagogical approaches
+              </div>
+            </button>
+
+            <button 
+              onClick={() => setActiveChatbot('lesson')}
+              style={{
+                padding: '1rem 1.5rem',
+                fontSize: '1rem',
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                textAlign: 'left'
+              }}
+            >
+              <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                📝 Lesson Planner
+              </div>
+              <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+                Create detailed lesson plans using the 5-stage learning cycle
+              </div>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Chatbot Modals */}
+      {activeChatbot === 'framework' && (
+        <Chatbot
+          type="framework"
+          title="Framework Analysis Assistant"
+          description="Get expert advice on teaching strategies, pedagogical approaches, and educational frameworks"
+          onClose={() => setActiveChatbot(null)}
+        />
+      )}
+
+      {activeChatbot === 'lesson' && (
+        <Chatbot
+          type="lesson"
+          title="Lesson Plan Creator"
+          description="Create detailed lesson plans using the 5-stage Teaching and Learning Cycle"
+          onClose={() => setActiveChatbot(null)}
+        />
+      )}
     </div>
   );
 };
