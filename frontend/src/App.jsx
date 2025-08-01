@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
+import LearningCycleContent from './components/LearningCycleContent'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -97,45 +98,7 @@ function App() {
     )
   }
 
-  return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      fontFamily: 'Arial, sans-serif',
-      gap: '20px'
-    }}>
-      <h1>Welcome, {user.displayName}!</h1>
-      <img 
-        src={user.photoURL} 
-        alt="Profile" 
-        style={{ 
-          borderRadius: '50%', 
-          width: '60px', 
-          height: '60px' 
-        }} 
-      />
-      <div style={{ fontSize: '18px', color: error ? 'red' : 'green' }}>
-        Backend says: {error || backendMessage}
-      </div>
-      <button 
-        onClick={handleLogout}
-        style={{
-          padding: '12px 24px',
-          fontSize: '16px',
-          backgroundColor: '#dc3545',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Sign Out
-      </button>
-    </div>
-  )
+  return <LearningCycleContent user={user} onLogout={handleLogout} />
 }
 
 export default App
