@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const anthropicService = require('./services/anthropicService');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +14,50 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Framework Analysis Chatbot
+app.post('/api/framework-analysis', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const result = await anthropicService.generateFrameworkAnalysis(message);
+    
+    if (result.success) {
+      res.json({ response: result.response });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('Framework analysis error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Lesson Planner Chatbot
+app.post('/api/lesson-planner', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const result = await anthropicService.generateLessonPlan(message);
+    
+    if (result.success) {
+      res.json({ response: result.response });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('Lesson planner error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.listen(PORT, () => {
