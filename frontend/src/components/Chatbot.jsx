@@ -149,6 +149,8 @@ const Chatbot = ({ type, title, description, onClose }) => {
               >
                 {message.role === 'assistant' ? (
                   <ReactMarkdown
+                    rehypePlugins={[]}
+                    remarkPlugins={[]}
                     components={{
                       p: ({ children }) => <p style={{ margin: '0 0 0.5rem 0' }}>{children}</p>,
                       ul: ({ children }) => <ul style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ul>,
@@ -159,9 +161,12 @@ const Chatbot = ({ type, title, description, onClose }) => {
                       h1: ({ children }) => <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h1>,
                       h2: ({ children }) => <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h2>,
                       h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h3>,
+                      h4: ({ children }) => <h4 style={{ fontSize: '0.95rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h4>,
                       code: ({ children }) => <code style={{ backgroundColor: '#404040', padding: '0.2rem 0.4rem', borderRadius: '3px', fontSize: '0.85rem' }}>{children}</code>,
-                      blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>
+                      blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>,
+                      div: ({ children, ...props }) => <div {...props}>{children}</div>
                     }}
+                    allowedElements={['p', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'br', 'div', 'span']}
                   >
                     {message.content}
                   </ReactMarkdown>
