@@ -285,30 +285,11 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
     return (
       <Card sx={{ 
         mt: 1.5, 
-        bgcolor: 'background.default', 
-        border: 2, 
-        borderColor: 'primary.main',
-        borderStyle: 'dashed'
+        bgcolor: 'background.paper', 
+        border: 1, 
+        borderColor: 'divider'
       }}>
         <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-          {/* Clear Instructions */}
-          <Box sx={{ 
-            mb: 2, 
-            p: 1, 
-            bgcolor: 'primary.light', 
-            borderRadius: 1,
-            border: 1,
-            borderColor: 'primary.main'
-          }}>
-            <Typography variant="body2" sx={{ 
-              fontWeight: 600, 
-              color: 'primary.dark',
-              textAlign: 'center'
-            }}>
-              💬 Choose what applies to you (tick boxes) and add any extra details below
-            </Typography>
-          </Box>
-
           <Box sx={{ mb: 1.5 }}>
             {options.map((option, index) => (
               <FormControlLabel
@@ -318,7 +299,6 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                     checked={selections.includes(option)}
                     onChange={(e) => handleCheckboxChange(option, e.target.checked)}
                     size="small"
-                    color="primary"
                   />
                 }
                 label={
@@ -331,11 +311,6 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                   alignItems: 'flex-start',
                   mb: 0.5,
                   ml: 0,
-                  p: 0.5,
-                  borderRadius: 1,
-                  '&:hover': {
-                    bgcolor: 'action.hover'
-                  },
                   '& .MuiFormControlLabel-label': { mt: -0.5 }
                 }}
               />
@@ -348,33 +323,41 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
             rows={2}
             value={additionalText}
             onChange={(e) => setAdditionalText(e.target.value)}
-            placeholder="Add extra details, questions, or context here... (optional)"
+            placeholder="Additional details..."
             variant="outlined"
             size="small"
             sx={{ mb: 1.5 }}
-            helperText={selections.length > 0 ? `Selected: ${selections.length} option${selections.length > 1 ? 's' : ''}` : "You can select options above, type here, or both!"}
           />
           
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {selections.length === 0 && !additionalText.trim() ? 
-                "Select options or add text to continue" : 
-                "Ready to send your response"}
-            </Typography>
-            <Button
-              onClick={handleSubmit}
-              disabled={selections.length === 0 && !additionalText.trim()}
-              variant="contained"
-              size="small"
-              color="primary"
-              sx={{ minWidth: 100 }}
-            >
-              {selections.length > 0 || additionalText.trim() ? "Send Response" : "Select Above"}
-            </Button>
-          </Box>
+          <Button
+            onClick={handleSubmit}
+            disabled={selections.length === 0 && !additionalText.trim()}
+            variant="contained"
+            size="small"
+            color="primary"
+            fullWidth
+          >
+            Send Reply
+          </Button>
         </CardContent>
       </Card>
     );
+  };
+
+  // Check if last message has interactive options
+  const hasActiveInteractiveOptions = () => {
+    if (messages.length === 0) return false;
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== 'assistant') return false;
+    
+    const interactiveData = parseInteractiveOptions(lastMessage.content);
+    if (!interactiveData) return false;
+    
+    const lastMessageIndex = messages.length - 1;
+    const interactiveState = interactiveStates[lastMessageIndex] || {};
+    
+    // Hide input if there are interactive options and user hasn't replied yet
+    return !interactiveState.hasReplied;
   };
 
   const sendMessage = async () => {
@@ -731,31 +714,33 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         <div ref={messagesEndRef} />
       </DialogContent>
 
-      <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
-        <TextField
-          fullWidth
-          multiline
-          rows={3}
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder={type === 'framework' 
-            ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
-            : 'Describe the lesson you want to create...'
-          }
-          disabled={isLoading || isLimitReached}
-          variant="outlined"
-          size="small"
-        />
-        <Button
-          variant="contained"
-          onClick={sendMessage}
-          disabled={isLoading || !inputMessage.trim() || isLimitReached}
-          sx={{ alignSelf: 'flex-end', minWidth: 'auto', px: 3 }}
-        >
-          Send
-        </Button>
-      </Box>
+      {!hasActiveInteractiveOptions() && (
+        <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={type === 'framework' 
+              ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
+              : 'Describe the lesson you want to create...'
+            }
+            disabled={isLoading || isLimitReached}
+            variant="outlined"
+            size="small"
+          />
+          <Button
+            variant="contained"
+            onClick={sendMessage}
+            disabled={isLoading || !inputMessage.trim() || isLimitReached}
+            sx={{ alignSelf: 'flex-end', minWidth: 'auto', px: 3 }}
+          >
+            Send
+          </Button>
+        </Box>
+      )}
     </Dialog>
   );
 };
