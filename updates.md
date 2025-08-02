@@ -58,3 +58,10 @@
 4. **Smart lesson planning questions** (Medium - improves quality)
 5. **Admin analytics** (Low - nice to have)
 6. **UI state management** (Low - polish) 
+
+- I added a logo.png in the frontend/public directory - can you make it my logo on the navigation bar and the brwoser tab?
+- remove Teaching Cycle AI the navbar title and replace it with bigger logo
+
+- The Teaching & Learning Cycle AI Assistant - put AI Assistant on a new line below the main title in the navbar
+
+- I want only my email - simon.hamblin@gmail.com - to be able to access the admin dashboard

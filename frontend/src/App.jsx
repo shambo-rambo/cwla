@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import LearningCycleContent from './components/LearningCycleContent'
+import AdminDashboard from './components/AdminDashboard'
 import { ThemeProvider, CssBaseline, Box, Typography, Card, Button } from '@mui/material'
 import { createAppTheme } from './theme'
 
@@ -11,6 +12,7 @@ function App() {
   const [backendMessage, setBackendMessage] = useState('Loading...')
   const [error, setError] = useState(null)
   const [darkMode, setDarkMode] = useState(true)
+  const [showAdmin, setShowAdmin] = useState(false)
   
   const theme = createAppTheme(darkMode ? 'dark' : 'light')
 
@@ -145,6 +147,18 @@ function App() {
     )
   }
 
+  if (showAdmin) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AdminDashboard 
+          user={user}
+          onBack={() => setShowAdmin(false)}
+        />
+      </ThemeProvider>
+    )
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -153,6 +167,7 @@ function App() {
         onLogout={handleLogout}
         darkMode={darkMode}
         toggleDarkMode={() => setDarkMode(!darkMode)}
+        onShowAdmin={() => setShowAdmin(true)}
       />
     </ThemeProvider>
   )

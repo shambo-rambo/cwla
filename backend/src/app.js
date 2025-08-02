@@ -182,6 +182,12 @@ app.delete('/api/conversations/:conversationId', async (req, res) => {
 // Admin Routes
 app.get('/api/admin/conversations', async (req, res) => {
   try {
+    // Check authorization header for admin email
+    const authEmail = req.headers['x-admin-email'];
+    if (authEmail !== 'simon.hamblin@gmail.com') {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
     const limit = parseInt(req.query.limit) || 100;
     const offset = parseInt(req.query.offset) || 0;
     

@@ -17,10 +17,10 @@ import {
   Grow,
   Slide
 } from '@mui/material';
-import { Brightness4, Brightness7 } from '@mui/icons-material';
+import { Brightness4, Brightness7, AdminPanelSettings } from '@mui/icons-material';
 import Chatbot from './Chatbot';
 
-const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode }) => {
+const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShowAdmin }) => {
   const theme = useTheme();
   const [activeChatbot, setActiveChatbot] = useState(null);
 
@@ -44,10 +44,22 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode }) => {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <AppBar position="static" elevation={2}>
         <Toolbar>
-          <Typography variant="h1" component="h1" sx={{ flexGrow: 1, color: 'primary.main' }}>
-            Teaching Cycle AI
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <img 
+              src="/logo.png" 
+              alt="Teaching Cycle AI Logo" 
+              style={{ 
+                height: '60px', 
+                width: 'auto'
+              }} 
+            />
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {user?.email === 'simon.hamblin@gmail.com' && (
+              <IconButton onClick={onShowAdmin} color="inherit" title="Admin Dashboard">
+                <AdminPanelSettings />
+              </IconButton>
+            )}
             <IconButton onClick={toggleDarkMode} color="inherit">
               {darkMode ? <Brightness7 /> : <Brightness4 />}
             </IconButton>
@@ -80,16 +92,26 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode }) => {
 
         <Fade in timeout={1000}>
           <Box sx={{ textAlign: 'center', mt: 8 }}>
-            <Typography variant="h2" component="h2" sx={{ 
-              mb: 6, 
-              color: 'text.primary',
-              background: 'linear-gradient(135deg, #49a2d4, #6bb6e0)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
-              The Teaching & Learning Cycle AI Assistant
-            </Typography>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="h2" component="h2" sx={{ 
+                mb: 1, 
+                color: 'text.primary',
+                background: 'linear-gradient(135deg, #49a2d4, #6bb6e0)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                lineHeight: 1.2
+              }}>
+                The Teaching & Learning Cycle
+              </Typography>
+              <Typography variant="h4" component="p" sx={{ 
+                mb: 6, 
+                color: 'text.secondary',
+                fontWeight: 400
+              }}>
+                AI Assistant
+              </Typography>
+            </Box>
             
             <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: '100%', mx: 'auto' }}>
               <Grid size={6}>
@@ -210,6 +232,7 @@ Lesson Planner
           type="framework"
           title="Framework Analysis Assistant"
           description="Get expert advice on teaching strategies, pedagogical approaches, and educational frameworks"
+          user={user}
           onClose={() => setActiveChatbot(null)}
         />
       )}
@@ -218,7 +241,8 @@ Lesson Planner
         <Chatbot
           type="lesson"
           title="Lesson Plan Creator"
-          description="Create detailed lesson plans using the 5-stage Teaching and Learning Cycle"
+          description="Create detailed lesson plans using the 4-stage Teaching and Learning Cycle"
+          user={user}
           onClose={() => setActiveChatbot(null)}
         />
       )}

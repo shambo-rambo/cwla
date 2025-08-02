@@ -14,12 +14,18 @@ import {
   FormControlLabel,
   Checkbox,
   Chip,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import { Close, Fullscreen, FullscreenExit } from '@mui/icons-material';
+import { Close, Fullscreen, FullscreenExit, ContentCopy, History, Delete, Add } from '@mui/icons-material';
 
-const Chatbot = ({ type, title, description, onClose }) => {
+const Chatbot = ({ type, title, description, user, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [messages, setMessages] = useState([]);
@@ -27,7 +33,121 @@ const Chatbot = ({ type, title, description, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [interactiveStates, setInteractiveStates] = useState({});
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState(null);
+  const [conversations, setConversations] = useState([]);
+  const [showSidebar, setShowSidebar] = useState(false);
   const messagesEndRef = useRef(null);
+
+  const copyToClipboard = async (content) => {
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = content;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  };
+
+  // Load user's conversations on component mount
+  useEffect(() => {
+    if (user?.uid) {
+      loadUserConversations();
+    }
+  }, [user, type]);
+
+  const loadUserConversations = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/conversations/${user.uid}`);
+      if (response.ok) {
+        const data = await response.json();
+        const typeConversations = data.conversations.filter(conv => conv.chat_type === type);
+        setConversations(typeConversations);
+      }
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+    }
+  };
+
+  const createNewConversation = async (firstMessage) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/conversations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.uid,
+          userEmail: user.email,
+          userName: user.displayName,
+          chatType: type,
+          title: firstMessage.substring(0, 50) + (firstMessage.length > 50 ? '...' : '')
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentConversationId(data.conversationId);
+        loadUserConversations(); // Refresh the list
+        return data.conversationId;
+      }
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+    }
+    return null;
+  };
+
+  const loadConversation = async (conversationId) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/conversations/${conversationId}/messages`);
+      if (response.ok) {
+        const data = await response.json();
+        const formattedMessages = data.messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+        setMessages(formattedMessages);
+        setCurrentConversationId(conversationId);
+        setInteractiveStates({}); // Reset interactive states
+      }
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+    }
+  };
+
+  const deleteConversation = async (conversationId) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/conversations/${conversationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.uid }),
+      });
+
+      if (response.ok) {
+        loadUserConversations(); // Refresh the list
+        if (currentConversationId === conversationId) {
+          // If we're deleting the current conversation, start fresh
+          setMessages([]);
+          setCurrentConversationId(null);
+          setInteractiveStates({});
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+    }
+  };
+
+  const startNewConversation = () => {
+    setMessages([]);
+    setCurrentConversationId(null);
+    setInteractiveStates({});
+    setInputMessage('');
+  };
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -104,10 +224,24 @@ const Chatbot = ({ type, title, description, onClose }) => {
   };
 
   // Interactive Options Component
-  const InteractiveOptions = ({ options, messageIndex, hasReplied, responseText }) => {
+  const InteractiveOptions = ({ options, messageIndex, hasReplied, responseText, isLastMessage, hasNewerMessages }) => {
     const [selections, setSelections] = useState([]);
     const [additionalText, setAdditionalText] = useState('');
 
+    // If user has replied AND there are newer messages, show minimal completed state
+    if (hasReplied && hasNewerMessages) {
+      return (
+        <Card sx={{ mt: 1.5, bgcolor: 'action.hover', border: 1, borderColor: 'divider' }}>
+          <CardContent sx={{ p: 1, '&:last-child': { pb: 1 } }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+              ✓ Responded: {responseText.length > 50 ? responseText.substring(0, 50) + '...' : responseText}
+            </Typography>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // If user has replied but this is still the last message, show full response
     if (hasReplied) {
       return (
         <Card sx={{ mt: 1.5, bgcolor: 'success.light', border: 1, borderColor: 'success.main' }}>
@@ -196,6 +330,14 @@ const Chatbot = ({ type, title, description, onClose }) => {
 
     const userMessage = { role: 'user', content: inputMessage };
     setMessages(prev => [...prev, userMessage]);
+    
+    // Create conversation if this is the first message
+    let conversationId = currentConversationId;
+    if (!conversationId && user?.uid) {
+      conversationId = await createNewConversation(inputMessage);
+    }
+
+    const messageToSend = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
@@ -207,8 +349,12 @@ const Chatbot = ({ type, title, description, onClose }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          message: inputMessage,
-          conversationHistory: messages
+          message: messageToSend,
+          conversationHistory: messages,
+          conversationId: conversationId,
+          userId: user?.uid,
+          userEmail: user?.email,
+          userName: user?.displayName
         }),
       });
 
@@ -263,6 +409,13 @@ const Chatbot = ({ type, title, description, onClose }) => {
           </Box>
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <IconButton
+              onClick={() => setShowSidebar(!showSidebar)}
+              size="small"
+              title="Conversation History"
+            >
+              <History />
+            </IconButton>
+            <IconButton
               onClick={() => setIsFullscreen(!isFullscreen)}
               size="small"
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
@@ -275,6 +428,88 @@ const Chatbot = ({ type, title, description, onClose }) => {
           </Box>
         </Box>
       </DialogTitle>
+
+      {/* Conversation History Sidebar */}
+      <Drawer
+        anchor="left"
+        open={showSidebar}
+        onClose={() => setShowSidebar(false)}
+        variant="temporary"
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 300,
+            position: 'absolute',
+            height: '100%',
+            bgcolor: 'background.paper',
+            borderRight: 1,
+            borderColor: 'divider'
+          }
+        }}
+        ModalProps={{
+          container: document.querySelector('[role="dialog"]'),
+          style: { position: 'absolute' }
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6">Conversations</Typography>
+            <IconButton onClick={startNewConversation} size="small" title="New Conversation">
+              <Add />
+            </IconButton>
+          </Box>
+          
+          <List sx={{ p: 0 }}>
+            {conversations.map((conversation) => (
+              <ListItem key={conversation.id} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    loadConversation(conversation.id);
+                    setShowSidebar(false);
+                  }}
+                  selected={currentConversationId === conversation.id}
+                  sx={{ borderRadius: 1, mb: 0.5 }}
+                >
+                  <ListItemText
+                    primary={conversation.title || 'Untitled Conversation'}
+                    secondary={new Date(conversation.created_at).toLocaleDateString()}
+                    primaryTypographyProps={{
+                      sx: { 
+                        fontSize: '0.875rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }
+                    }}
+                    secondaryTypographyProps={{
+                      sx: { fontSize: '0.75rem' }
+                    }}
+                  />
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteConversation(conversation.id);
+                    }}
+                    size="small"
+                    sx={{ ml: 1 }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </ListItemButton>
+              </ListItem>
+            ))}
+            
+            {conversations.length === 0 && (
+              <ListItem>
+                <ListItemText 
+                  primary="No conversations yet"
+                  secondary="Start chatting to create your first conversation"
+                  sx={{ textAlign: 'center', color: 'text.secondary' }}
+                />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      </Drawer>
 
       <DialogContent sx={{ 
         flex: 1, 
@@ -309,9 +544,29 @@ const Chatbot = ({ type, title, description, onClose }) => {
                 bgcolor: message.role === 'user' ? 'primary.main' : 'background.paper',
                 color: message.role === 'user' ? 'primary.contrastText' : 'text.primary',
                 border: message.role === 'assistant' ? 1 : 0,
-                borderColor: 'divider'
+                borderColor: 'divider',
+                position: 'relative'
               }}
             >
+              {message.role === 'assistant' && (
+                <IconButton
+                  size="small"
+                  onClick={() => copyToClipboard(message.content)}
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    bgcolor: 'background.paper',
+                    boxShadow: 1,
+                    zIndex: 1,
+                    '&:hover': {
+                      bgcolor: 'grey.100'
+                    }
+                  }}
+                >
+                  <ContentCopy fontSize="small" />
+                </IconButton>
+              )}
               <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                 {message.role === 'assistant' ? (
                   (() => {
@@ -346,6 +601,8 @@ const Chatbot = ({ type, title, description, onClose }) => {
                             messageIndex={index}
                             hasReplied={interactiveState.hasReplied}
                             responseText={interactiveState.responseText}
+                            isLastMessage={index === messages.length - 1}
+                            hasNewerMessages={index < messages.length - 1}
                           />
                           
                           {interactiveData.afterOptions && (
