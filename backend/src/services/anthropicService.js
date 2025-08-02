@@ -117,8 +117,268 @@ Keep it conversational and encouraging - like a helpful colleague asking follow-
     }
   }
 
+  async generateWorkflowSelection(userInput, conversationHistory = []) {
+    try {
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [
+          {
+            role: 'user',
+            content: `You are a lesson planning assistant. A teacher wants help with: "${userInput}"
+
+Present them with three workflow options using the gradual release of responsibility model. Format your response exactly like this:
+
+**Welcome to the Lesson Planner!** 👋
+
+I can help you in three different ways based on how much support you'd like:
+
+**WORKFLOW OPTIONS:**
+
+```interactive-options
+- 🤖 **"I Do"** - I'll create the complete lesson plan for you
+- 🤝 **"We Do"** - We'll collaborate through guided questions  
+- 👤 **"You Do"** - You provide your lesson draft, I'll give feedback
+```
+
+**Choose your preferred workflow:**
+
+- **"I Do"**: Perfect when you're short on time or want a complete lesson plan created from scratch
+- **"We Do"**: Great for collaborative planning where you want input on specific decisions
+- **"You Do"**: Ideal when you have a lesson draft and want expert feedback and improvements
+
+Which workflow would work best for your needs today?`
+          }
+        ]
+      });
+
+      return {
+        success: true,
+        response: response.content[0].text
+      };
+    } catch (error) {
+      console.error('Workflow selection error:', error);
+      return {
+        success: false,
+        error: `Failed to generate workflow selection: ${error.message}`
+      };
+    }
+  }
+
+  async generateIDoResponse(userInput, conversationHistory = []) {
+    try {
+      // Get the original lesson request from the first message
+      const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
+      
+      const messages = conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      messages.push({
+        role: 'user',
+        content: `Great! You've chosen "I Do" - I'll create a complete lesson plan for you.
+
+Original request: "${originalRequest}"
+
+Since you want me to do all the work, I'll create a comprehensive lesson plan using the 4-stage Teaching and Learning Cycle. I'll make reasonable assumptions about your context and create something ready to use.
+
+Please create a detailed, ready-to-implement lesson plan following this structure:
+
+**LESSON OVERVIEW**
+- Subject/Topic:
+- Grade Level:
+- Duration:
+- Learning Objectives:
+
+**STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
+- Activate prior knowledge and build context
+- Introduce key vocabulary and concepts
+- Explore the topic through discussion and shared activities
+- Set the purpose for learning
+
+**STAGE 2: MODELING AND DECONSTRUCTION** (25-30% of lesson time)  
+- Teacher demonstrates or models the skill/concept
+- Break down examples step-by-step
+- Identify key features and patterns
+- Joint analysis of mentor texts or examples
+
+**STAGE 3: JOINT CONSTRUCTION** (30-35% of lesson time)
+- Teacher and students work together
+- Guided practice with scaffolding
+- Collaborative problem-solving or writing
+- Strategic questioning and feedback
+
+**STAGE 4: INDEPENDENT CONSTRUCTION** (20-25% of lesson time)
+- Students work independently
+- Apply learning to new contexts
+- Individual assessment tasks
+- Self-reflection and peer feedback
+
+**RESOURCES NEEDED**
+- Materials list
+- Technology requirements
+- Preparation notes
+
+**DIFFERENTIATION**
+- Support for struggling learners
+- Extensions for advanced students
+- Accommodations for diverse needs
+
+Make it practical, detailed, and immediately usable.`
+      });
+
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: messages
+      });
+
+      return {
+        success: true,
+        response: response.content[0].text
+      };
+    } catch (error) {
+      console.error('I Do response error:', error);
+      return {
+        success: false,
+        error: `Failed to generate I Do response: ${error.message}`
+      };
+    }
+  }
+
+  async generateWeDoResponse(userInput, conversationHistory = []) {
+    try {
+      const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
+      
+      const messages = conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      messages.push({
+        role: 'user',
+        content: `Perfect! You've chosen "We Do" - let's collaborate to create your lesson plan.
+
+Original request: "${originalRequest}"
+
+I'll guide you through creating a lesson plan by asking targeted questions about your specific context and preferences. This ensures the final plan is perfectly tailored to your classroom.
+
+Let's start with some key questions:
+
+**Class Context:**
+1. How many students are in your class?
+2. What's their current knowledge level with this topic?
+3. Are there any students with special learning needs to consider?
+
+**Lesson Logistics:**
+4. How long is your lesson period?
+5. Is this a single lesson or part of a series?
+6. What resources/technology do you have available?
+
+**Learning Focus:**
+7. What specific skills or knowledge should students gain?
+8. How will you know if students have learned successfully?
+9. Are there any curriculum requirements to address?
+
+Please answer 2-3 of these questions that feel most important to you, and I'll ask follow-up questions to help us build the perfect lesson together!`
+      });
+
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: messages
+      });
+
+      return {
+        success: true,
+        response: response.content[0].text
+      };
+    } catch (error) {
+      console.error('We Do response error:', error);
+      return {
+        success: false,
+        error: `Failed to generate We Do response: ${error.message}`
+      };
+    }
+  }
+
+  async generateYouDoResponse(userInput, conversationHistory = []) {
+    try {
+      const messages = conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      messages.push({
+        role: 'user',
+        content: `Excellent choice! You've selected "You Do" - I'm ready to provide feedback on your lesson plan.
+
+Please paste your lesson plan draft below, and I'll provide:
+
+✅ **Constructive feedback** on structure and pedagogy
+✅ **Alignment check** with the 4-stage Teaching and Learning Cycle
+✅ **Enhancement suggestions** for student engagement
+✅ **Differentiation recommendations** for diverse learners
+✅ **Assessment improvement** ideas
+✅ **Resource and timing** optimization tips
+
+**What to include in your lesson plan:**
+- Learning objectives
+- Activities and timing
+- Resources needed
+- Assessment strategies
+- Any specific concerns or areas you'd like me to focus on
+
+Just paste your lesson plan when you're ready, and I'll give you detailed, actionable feedback to make it even better! 📚`
+      });
+
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: messages
+      });
+
+      return {
+        success: true,
+        response: response.content[0].text
+      };
+    } catch (error) {
+      console.error('You Do response error:', error);
+      return {
+        success: false,
+        error: `Failed to generate You Do response: ${error.message}`
+      };
+    }
+  }
+
   async generateLessonPlan(userInput, conversationHistory = []) {
     try {
+      // Check if this is the very first message - offer workflow selection
+      if (conversationHistory.length === 0) {
+        return this.generateWorkflowSelection(userInput, conversationHistory);
+      }
+
+      // Check if user just selected a workflow
+      const lastUserMessage = conversationHistory[conversationHistory.length - 1];
+      const isWorkflowSelection = lastUserMessage && (
+        lastUserMessage.content.toLowerCase().includes('i do') ||
+        lastUserMessage.content.toLowerCase().includes('we do') ||
+        lastUserMessage.content.toLowerCase().includes('you do')
+      );
+
+      if (isWorkflowSelection) {
+        const selectedWorkflow = lastUserMessage.content.toLowerCase();
+        
+        if (selectedWorkflow.includes('you do')) {
+          return this.generateYouDoResponse(userInput, conversationHistory);
+        } else if (selectedWorkflow.includes('we do')) {
+          return this.generateWeDoResponse(userInput, conversationHistory);
+        } else if (selectedWorkflow.includes('i do')) {
+          return this.generateIDoResponse(userInput, conversationHistory);
+        }
+      }
+
       // Check if this is the first message and if it lacks detail
       if (conversationHistory.length === 0 && !this.isLessonRequestComplete(userInput)) {
         return this.generateClarifyingQuestions(userInput, conversationHistory);
