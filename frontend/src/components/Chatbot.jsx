@@ -283,8 +283,32 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
     };
 
     return (
-      <Card sx={{ mt: 1.5, bgcolor: 'background.default', border: 1, borderColor: 'divider' }}>
+      <Card sx={{ 
+        mt: 1.5, 
+        bgcolor: 'background.default', 
+        border: 2, 
+        borderColor: 'primary.main',
+        borderStyle: 'dashed'
+      }}>
         <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+          {/* Clear Instructions */}
+          <Box sx={{ 
+            mb: 2, 
+            p: 1, 
+            bgcolor: 'primary.light', 
+            borderRadius: 1,
+            border: 1,
+            borderColor: 'primary.main'
+          }}>
+            <Typography variant="body2" sx={{ 
+              fontWeight: 600, 
+              color: 'primary.dark',
+              textAlign: 'center'
+            }}>
+              💬 Choose what applies to you (tick boxes) and add any extra details below
+            </Typography>
+          </Box>
+
           <Box sx={{ mb: 1.5 }}>
             {options.map((option, index) => (
               <FormControlLabel
@@ -294,6 +318,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                     checked={selections.includes(option)}
                     onChange={(e) => handleCheckboxChange(option, e.target.checked)}
                     size="small"
+                    color="primary"
                   />
                 }
                 label={
@@ -306,6 +331,11 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                   alignItems: 'flex-start',
                   mb: 0.5,
                   ml: 0,
+                  p: 0.5,
+                  borderRadius: 1,
+                  '&:hover': {
+                    bgcolor: 'action.hover'
+                  },
                   '& .MuiFormControlLabel-label': { mt: -0.5 }
                 }}
               />
@@ -318,21 +348,30 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
             rows={2}
             value={additionalText}
             onChange={(e) => setAdditionalText(e.target.value)}
-            placeholder="Additional details or other questions..."
+            placeholder="Add extra details, questions, or context here... (optional)"
             variant="outlined"
             size="small"
             sx={{ mb: 1.5 }}
+            helperText={selections.length > 0 ? `Selected: ${selections.length} option${selections.length > 1 ? 's' : ''}` : "You can select options above, type here, or both!"}
           />
           
-          <Button
-            onClick={handleSubmit}
-            disabled={selections.length === 0 && !additionalText.trim()}
-            variant="contained"
-            size="small"
-            color="primary"
-          >
-            Send Reply
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {selections.length === 0 && !additionalText.trim() ? 
+                "Select options or add text to continue" : 
+                "Ready to send your response"}
+            </Typography>
+            <Button
+              onClick={handleSubmit}
+              disabled={selections.length === 0 && !additionalText.trim()}
+              variant="contained"
+              size="small"
+              color="primary"
+              sx={{ minWidth: 100 }}
+            >
+              {selections.length > 0 || additionalText.trim() ? "Send Response" : "Select Above"}
+            </Button>
+          </Box>
         </CardContent>
       </Card>
     );
