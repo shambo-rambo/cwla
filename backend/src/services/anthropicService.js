@@ -214,7 +214,7 @@ Make it practical, detailed, and immediately usable.`
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 1000,
         messages: messages
       });
 
@@ -454,7 +454,7 @@ Make it practical, detailed, and immediately usable by teachers.`;
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1800, // Reduced for faster response
+        max_tokens: 1200, // Reduced for faster response
         messages: messages
       });
 
