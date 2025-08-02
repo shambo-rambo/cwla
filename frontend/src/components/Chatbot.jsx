@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 const Chatbot = ({ type, title, description, onClose }) => {
@@ -6,6 +6,13 @@ const Chatbot = ({ type, title, description, onClose }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [interactiveStates, setInteractiveStates] = useState({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
 
   // Parse interactive options from AI response
   const parseInteractiveOptions = (content) => {
@@ -236,23 +243,23 @@ const Chatbot = ({ type, title, description, onClose }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: isFullscreen ? '#3a3939' : 'rgba(0,0,0,0.5)',
       zIndex: 1000,
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem'
+      alignItems: isFullscreen ? 'stretch' : 'center',
+      justifyContent: isFullscreen ? 'stretch' : 'center',
+      padding: isFullscreen ? 0 : '1rem'
     }}>
       <div style={{
         backgroundColor: '#3a3939',
-        borderRadius: '8px',
+        borderRadius: isFullscreen ? 0 : '8px',
         width: '100%',
-        maxWidth: '800px',
-        height: '80vh',
+        maxWidth: isFullscreen ? '100%' : '800px',
+        height: isFullscreen ? '100vh' : '80vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
-        border: '1px solid #404040'
+        boxShadow: isFullscreen ? 'none' : '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+        border: isFullscreen ? 'none' : '1px solid #404040'
       }}>
         {/* Header */}
         <div style={{
@@ -270,19 +277,36 @@ const Chatbot = ({ type, title, description, onClose }) => {
               {description}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              padding: '0.5rem',
-              backgroundColor: 'transparent',
-              border: 'none',
-              fontSize: '1.5rem',
-              cursor: 'pointer',
-              color: '#a6a6a6'
-            }}
-          >
-            ×
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              style={{
+                padding: '0.5rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '1.2rem',
+                cursor: 'pointer',
+                color: '#a6a6a6',
+                borderRadius: '4px'
+              }}
+              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            >
+              {isFullscreen ? '⊟' : '⊞'}
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                padding: '0.5rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+                color: '#a6a6a6'
+              }}
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         {/* Messages */}
@@ -449,6 +473,9 @@ const Chatbot = ({ type, title, description, onClose }) => {
               </div>
             </div>
           )}
+          
+          {/* Auto-scroll target */}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}

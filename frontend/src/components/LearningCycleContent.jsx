@@ -1,8 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chatbot from './Chatbot';
 
 const LearningCycleContent = ({ user, onLogout }) => {
   const [activeChatbot, setActiveChatbot] = useState(null);
+
+  // Check for URL parameters to auto-open chatbots
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const openParam = urlParams.get('open');
+    
+    if (openParam === 'lesson-planner') {
+      setActiveChatbot('lesson');
+      // Clean up URL after opening
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (openParam === 'framework') {
+      setActiveChatbot('framework');
+      // Clean up URL after opening
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
   const cycleStages = [
     {
       stage: "1. Engage",

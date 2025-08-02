@@ -57,11 +57,11 @@ They want lesson plans or activities, but you're the framework expert, not the l
 
 Keep it concise and helpful (under 100 words):
 - Briefly acknowledge what they're looking for
-- Redirect them: "For detailed lesson plans implementing these strategies, use our **lesson planner chatbot**. You can access it from the homepage by clicking 'Start New Lesson Planning'."
+- Redirect them with a direct link: "For detailed lesson plans implementing these strategies, **[click here to open the lesson planner](https://cwla-52a1d.web.app/?open=lesson-planner)**."
 - Share 1-2 quick TLC tips relevant to their request
 - Be friendly but direct
 
-Use markdown **bold** for key points. No rambling or overly personal tone.`
+Use markdown **bold** for key points and include the clickable link. No rambling or overly personal tone.`
             }
           ]
         });
