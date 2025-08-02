@@ -2,12 +2,17 @@ import { useState, useEffect } from 'react'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import LearningCycleContent from './components/LearningCycleContent'
+import { ThemeProvider, CssBaseline, Box, Typography, Card, Button } from '@mui/material'
+import { createAppTheme } from './theme'
 
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [backendMessage, setBackendMessage] = useState('Loading...')
   const [error, setError] = useState(null)
+  const [darkMode, setDarkMode] = useState(true)
+  
+  const theme = createAppTheme(darkMode ? 'dark' : 'light')
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -49,65 +54,108 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif',
-        fontSize: '24px'
-      }}>
-        Loading...
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '24px'
+        }}>
+          Loading...
+        </div>
+      </ThemeProvider>
     )
   }
 
   if (!user) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif',
-        gap: '20px',
-        backgroundColor: '#292828',
-        color: '#ffffff'
-      }}>
-        <h1 style={{ color: '#49a2d4', fontSize: '3rem', marginBottom: '1rem' }}>
-          Teaching Cycle AI
-        </h1>
-        <p style={{ color: '#a6a6a6', fontSize: '1.2rem', textAlign: 'center', maxWidth: '400px' }}>
-          Transform your teaching with AI-powered lesson planning and framework analysis
-        </p>
-        <div style={{ fontSize: '14px', color: error ? '#ff6b6b' : '#49a2d4', marginBottom: '1rem' }}>
-          Backend: {error || backendMessage}
-        </div>
-        <button 
-          onClick={handleGoogleLogin}
-          style={{
-            padding: '16px 32px',
-            fontSize: '18px',
-            backgroundColor: '#49a2d4',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            boxShadow: '0 4px 8px rgba(73, 162, 212, 0.3)',
-            transition: 'all 0.2s'
-          }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#4a92c4'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#49a2d4'}
-        >
-          🚀 Sign in with Google
-        </button>
-      </div>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #1f2937 50%, #111827 100%)',
+          gap: 3,
+          px: 2
+        }}>
+          <Typography 
+            variant="h1" 
+            sx={{ 
+              background: 'linear-gradient(135deg, #49a2d4, #6bb6e0)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '2.5rem', md: '3rem' },
+              textAlign: 'center',
+              mb: 2
+            }}
+          >
+            Teaching Cycle AI
+          </Typography>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              color: 'text.secondary',
+              textAlign: 'center',
+              maxWidth: '500px',
+              mb: 2
+            }}
+          >
+            Transform your teaching with AI-powered lesson planning and framework analysis
+          </Typography>
+          <Card sx={{ p: 2, mb: 2, border: '1px solid', borderColor: 'divider' }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: error ? 'error.main' : 'primary.main',
+                textAlign: 'center'
+              }}
+            >
+              Backend: {error || backendMessage}
+            </Typography>
+          </Card>
+          <Button
+            onClick={handleGoogleLogin}
+            variant="contained"
+            size="large"
+            sx={{
+              px: 4,
+              py: 2,
+              fontSize: '1.1rem',
+              background: 'linear-gradient(135deg, #49a2d4, #3b82c7)',
+              border: '1px solid #49a2d4',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #3b82c7, #2563eb)',
+                boxShadow: '0 8px 24px rgba(73, 162, 212, 0.4)',
+                transform: 'translateY(-2px)'
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
+            🚀 Sign in with Google
+          </Button>
+        </Box>
+      </ThemeProvider>
     )
   }
 
-  return <LearningCycleContent user={user} onLogout={handleLogout} />
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <LearningCycleContent 
+        user={user} 
+        onLogout={handleLogout}
+        darkMode={darkMode}
+        toggleDarkMode={() => setDarkMode(!darkMode)}
+      />
+    </ThemeProvider>
+  )
 }
 
 export default App

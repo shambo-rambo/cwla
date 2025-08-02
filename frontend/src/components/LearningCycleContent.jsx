@@ -1,7 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  AppBar,
+  Toolbar,
+  Avatar,
+  IconButton,
+  Chip,
+  Container,
+  Grid,
+  useTheme,
+  Fade,
+  Grow,
+  Slide
+} from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 import Chatbot from './Chatbot';
 
-const LearningCycleContent = ({ user, onLogout }) => {
+const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode }) => {
+  const theme = useTheme();
   const [activeChatbot, setActiveChatbot] = useState(null);
 
   // Check for URL parameters to auto-open chatbots
@@ -19,243 +39,170 @@ const LearningCycleContent = ({ user, onLogout }) => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
-  const cycleStages = [
-    {
-      stage: "1. Engage",
-      description: "Capture students' interest and activate prior knowledge",
-      color: "bg-blue-100 text-blue-800"
-    },
-    {
-      stage: "2. Explore", 
-      description: "Students investigate and discover concepts hands-on",
-      color: "bg-green-100 text-green-800"
-    },
-    {
-      stage: "3. Explain",
-      description: "Teacher provides clear explanations and introduces vocabulary",
-      color: "bg-yellow-100 text-yellow-800"
-    },
-    {
-      stage: "4. Elaborate",
-      description: "Students apply knowledge to new situations and contexts",
-      color: "bg-purple-100 text-purple-800"
-    },
-    {
-      stage: "5. Evaluate",
-      description: "Assess student understanding and lesson effectiveness",
-      color: "bg-red-100 text-red-800"
-    }
-  ];
 
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      backgroundColor: '#292828',
-      fontFamily: 'Arial, sans-serif',
-      color: '#ffffff'
-    }}>
-      {/* Header */}
-      <div style={{
-        backgroundColor: '#3a3939',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-        padding: '1rem 0'
-      }}>
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto', 
-          padding: '0 1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#49a2d4' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AppBar position="static" elevation={2}>
+        <Toolbar>
+          <Typography variant="h1" component="h1" sx={{ flexGrow: 1, color: 'primary.main' }}>
             Teaching Cycle AI
-          </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <img 
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton onClick={toggleDarkMode} color="inherit">
+              {darkMode ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
+            <Avatar 
               src={user.photoURL} 
-              alt="Profile" 
-              style={{ 
-                borderRadius: '50%', 
-                width: '40px', 
-                height: '40px',
-                border: '2px solid #49a2d4'
-              }} 
-            />
-            <span style={{ fontWeight: '500', color: '#ffffff' }}>{user.displayName}</span>
-            <button 
-              onClick={onLogout}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#49a2d4',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: '500'
+              alt="Profile"
+              sx={{ 
+                width: 40, 
+                height: 40, 
+                border: 2, 
+                borderColor: 'primary.main' 
               }}
+            />
+            <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+              {user.displayName}
+            </Typography>
+            <Button 
+              variant="contained"
+              color="primary"
+              onClick={onLogout}
+              size="small"
             >
               Sign Out
-            </button>
-          </div>
-        </div>
-      </div>
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-      {/* Main Content */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-        {/* Hero Section */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ 
-            fontSize: '3rem', 
-            fontWeight: 'bold', 
-            color: '#ffffff',
-            marginBottom: '1rem'
-          }}>
-            Welcome to Your Teaching Dashboard
-          </h2>
-          <p style={{ 
-            fontSize: '1.25rem', 
-            color: '#a6a6a6',
-            maxWidth: '600px',
-            margin: '0 auto'
-          }}>
-            Plan engaging lessons using the 5-stage Teaching and Learning Cycle framework
-          </p>
-        </div>
+      <Container maxWidth="lg" sx={{ py: 2 }}>
 
-        {/* Learning Cycle Stages */}
-        <div style={{ marginBottom: '3rem' }}>
-          <h3 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
-            textAlign: 'center',
-            marginBottom: '2rem',
-            color: '#49a2d4'
-          }}>
-            The Teaching & Learning Cycle
-          </h3>
-          
-          <div style={{ 
-            display: 'grid', 
-            gap: '1.5rem',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))'
-          }}>
-            {cycleStages.map((stage, index) => (
-              <div 
-                key={index}
-                style={{
-                  backgroundColor: '#3a3939',
-                  padding: '1.5rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                  border: '1px solid #404040'
+        <Fade in timeout={1000}>
+          <Box sx={{ textAlign: 'center', mt: 8 }}>
+            <Typography variant="h2" component="h2" sx={{ 
+              mb: 6, 
+              color: 'text.primary',
+              background: 'linear-gradient(135deg, #49a2d4, #6bb6e0)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>
+              The Teaching & Learning Cycle AI Assistant
+            </Typography>
+            
+            <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: '100%', mx: 'auto' }}>
+              <Grid size={6}>
+                <Card sx={{
+                  height: '200px',
+                  background: theme.palette.mode === 'dark' 
+                    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' 
+                    : 'linear-gradient(135deg, #1e1e1e 0%, #3a3a3a 100%)',
+                  borderRadius: 4,
+                  border: theme.palette.mode === 'dark' 
+                    ? '1px solid rgba(73, 162, 212, 0.3)' 
+                    : '1px solid rgba(73, 162, 212, 0.2)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 20px 60px rgba(73, 162, 212, 0.3)',
+                    border: '1px solid rgba(73, 162, 212, 0.6)',
+                  },
                 }}
-              >
-                <div style={{
-                  display: 'inline-block',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '20px',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  marginBottom: '1rem',
-                  backgroundColor: '#49a2d4',
-                  color: '#ffffff'
-                }}>
-                  {stage.stage}
-                </div>
-                <p style={{ color: '#a6a6a6', lineHeight: '1.6' }}>
-                  {stage.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Chatbot Action Section */}
-        <div style={{
-          backgroundColor: '#3a3939',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-          textAlign: 'center',
-          border: '1px solid #404040'
-        }}>
-          <h3 style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            color: '#49a2d4'
-          }}>
-            AI Teaching Assistants
-          </h3>
-          <p style={{ 
-            color: '#a6a6a6',
-            marginBottom: '2rem'
-          }}>
-            Get expert guidance on teaching frameworks and create detailed lesson plans
-          </p>
-          
-          <div style={{
-            display: 'grid',
-            gap: '1rem',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }}>
-            <button 
-              onClick={() => setActiveChatbot('framework')}
-              style={{
-                padding: '1rem 1.5rem',
-                fontSize: '1rem',
-                backgroundColor: '#49a2d4',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                textAlign: 'left',
-                transition: 'all 0.2s',
-                boxShadow: '0 2px 4px rgba(73, 162, 212, 0.3)'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#4a92c4'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#49a2d4'}
-            >
-              <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                🎯 Framework Analysis
-              </div>
-              <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
-                Get expert advice on teaching strategies and pedagogical approaches
-              </div>
-            </button>
-
-            <button 
-              onClick={() => setActiveChatbot('lesson')}
-              style={{
-                padding: '1rem 1.5rem',
-                fontSize: '1rem',
-                backgroundColor: '#1e3a52',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                textAlign: 'left',
-                transition: 'all 0.2s',
-                boxShadow: '0 2px 4px rgba(30, 58, 82, 0.3)'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#2a4a6b'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#1e3a52'}
-            >
-              <div style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                📝 Lesson Planner
-              </div>
-              <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
-                Create detailed lesson plans using the 5-stage learning cycle
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
+                onClick={() => setActiveChatbot('framework')}
+                >
+                  <CardContent sx={{ 
+                    p: 2, 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="h5" sx={{ 
+                      mb: 1, 
+                      color: '#49a2d4',
+                      fontWeight: 600
+                    }}>
+Framework Analysis
+                    </Typography>
+                    <Typography variant="body2" sx={{ 
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: 1.5,
+                      mb: 2,
+                      fontSize: '0.9rem'
+                    }}>
+                      Get expert advice on teaching strategies, pedagogical approaches, and educational frameworks
+                    </Typography>
+                    <Box sx={{
+                      width: '60px',
+                      height: '3px',
+                      background: 'linear-gradient(90deg, #49a2d4, #6bb6e0)',
+                      borderRadius: '2px'
+                    }} />
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              <Grid size={6}>
+                <Card sx={{
+                  height: '200px',
+                  background: theme.palette.mode === 'dark' 
+                    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' 
+                    : 'linear-gradient(135deg, #1e1e1e 0%, #3a3a3a 100%)',
+                  borderRadius: 4,
+                  border: theme.palette.mode === 'dark' 
+                    ? '1px solid rgba(73, 162, 212, 0.3)' 
+                    : '1px solid rgba(73, 162, 212, 0.2)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 20px 60px rgba(73, 162, 212, 0.3)',
+                    border: '1px solid rgba(73, 162, 212, 0.6)',
+                  },
+                }}
+                onClick={() => setActiveChatbot('lesson')}
+                >
+                  <CardContent sx={{ 
+                    p: 2, 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                  }}>
+                    <Typography variant="h5" sx={{ 
+                      mb: 1, 
+                      color: '#49a2d4',
+                      fontWeight: 600
+                    }}>
+Lesson Planner
+                    </Typography>
+                    <Typography variant="body2" sx={{ 
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      lineHeight: 1.5,
+                      mb: 2,
+                      fontSize: '0.9rem'
+                    }}>
+                      Create detailed lesson plans using the 4-stage Teaching and Learning Cycle
+                    </Typography>
+                    <Box sx={{
+                      width: '60px',
+                      height: '3px',
+                      background: 'linear-gradient(90deg, #49a2d4, #6bb6e0)',
+                      borderRadius: '2px'
+                    }} />
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </Fade>
+      </Container>
 
       {/* Chatbot Modals */}
       {activeChatbot === 'framework' && (
@@ -275,7 +222,7 @@ const LearningCycleContent = ({ user, onLogout }) => {
           onClose={() => setActiveChatbot(null)}
         />
       )}
-    </div>
+    </Box>
   );
 };
 
