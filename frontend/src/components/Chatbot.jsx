@@ -1,7 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  TextField,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  FormControlLabel,
+  Checkbox,
+  Chip,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
+import { Close, Fullscreen, FullscreenExit } from '@mui/icons-material';
 
 const Chatbot = ({ type, title, description, onClose }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -90,20 +110,16 @@ const Chatbot = ({ type, title, description, onClose }) => {
 
     if (hasReplied) {
       return (
-        <div style={{
-          marginTop: '0.75rem',
-          padding: '0.75rem',
-          backgroundColor: '#1f2937',
-          borderRadius: '6px',
-          border: '1px solid #374151'
-        }}>
-          <div style={{ color: '#10b981', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-            ✓ Reply sent
-          </div>
-          <div style={{ color: '#d1d5db', fontSize: '0.85rem' }}>
-            {responseText}
-          </div>
-        </div>
+        <Card sx={{ mt: 1.5, bgcolor: 'success.light', border: 1, borderColor: 'success.main' }}>
+          <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+            <Typography variant="body2" sx={{ color: 'success.dark', mb: 1, fontWeight: 600 }}>
+              ✓ Reply sent
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.primary' }}>
+              {responseText}
+            </Typography>
+          </CardContent>
+        </Card>
       );
     }
 
@@ -120,77 +136,58 @@ const Chatbot = ({ type, title, description, onClose }) => {
     };
 
     return (
-      <div style={{
-        marginTop: '0.75rem',
-        padding: '0.75rem',
-        backgroundColor: '#1f2937',
-        borderRadius: '6px',
-        border: '1px solid #374151'
-      }}>
-        <div style={{ marginBottom: '0.75rem' }}>
-          {options.map((option, index) => (
-            <label
-              key={index}
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                marginBottom: '0.5rem',
-                cursor: 'pointer',
-                color: '#d1d5db',
-                fontSize: '0.9rem'
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selections.includes(option)}
-                onChange={(e) => handleCheckboxChange(option, e.target.checked)}
-                style={{
-                  marginRight: '0.5rem',
-                  marginTop: '0.1rem',
-                  accentColor: '#49a2d4'
+      <Card sx={{ mt: 1.5, bgcolor: 'background.default', border: 1, borderColor: 'divider' }}>
+        <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+          <Box sx={{ mb: 1.5 }}>
+            {options.map((option, index) => (
+              <FormControlLabel
+                key={index}
+                control={
+                  <Checkbox
+                    checked={selections.includes(option)}
+                    onChange={(e) => handleCheckboxChange(option, e.target.checked)}
+                    size="small"
+                  />
+                }
+                label={
+                  <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                    {option}
+                  </Typography>
+                }
+                sx={{ 
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 0.5,
+                  ml: 0,
+                  '& .MuiFormControlLabel-label': { mt: -0.5 }
                 }}
               />
-              <span>{option}</span>
-            </label>
-          ))}
-        </div>
-        
-        <textarea
-          value={additionalText}
-          onChange={(e) => setAdditionalText(e.target.value)}
-          placeholder="Additional details or other questions..."
-          style={{
-            width: '100%',
-            padding: '0.5rem',
-            backgroundColor: '#374151',
-            border: '1px solid #4b5563',
-            borderRadius: '4px',
-            color: '#ffffff',
-            fontSize: '0.9rem',
-            fontFamily: 'inherit',
-            resize: 'vertical',
-            minHeight: '60px',
-            marginBottom: '0.75rem'
-          }}
-        />
-        
-        <button
-          onClick={handleSubmit}
-          disabled={selections.length === 0 && !additionalText.trim()}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: selections.length > 0 || additionalText.trim() ? '#49a2d4' : '#4b5563',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: selections.length > 0 || additionalText.trim() ? 'pointer' : 'not-allowed',
-            fontWeight: '500',
-            fontSize: '0.9rem'
-          }}
-        >
-          Send Reply
-        </button>
-      </div>
+            ))}
+          </Box>
+          
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            value={additionalText}
+            onChange={(e) => setAdditionalText(e.target.value)}
+            placeholder="Additional details or other questions..."
+            variant="outlined"
+            size="small"
+            sx={{ mb: 1.5 }}
+          />
+          
+          <Button
+            onClick={handleSubmit}
+            disabled={selections.length === 0 && !additionalText.trim()}
+            variant="contained"
+            size="small"
+            color="primary"
+          >
+            Send Reply
+          </Button>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -209,7 +206,10 @@ const Chatbot = ({ type, title, description, onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({ 
+          message: inputMessage,
+          conversationHistory: messages
+        }),
       });
 
       const data = await response.json();
@@ -237,121 +237,82 @@ const Chatbot = ({ type, title, description, onClose }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: isFullscreen ? '#3a3939' : 'rgba(0,0,0,0.5)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: isFullscreen ? 'stretch' : 'center',
-      justifyContent: isFullscreen ? 'stretch' : 'center',
-      padding: isFullscreen ? 0 : '1rem'
-    }}>
-      <div style={{
-        backgroundColor: '#3a3939',
-        borderRadius: isFullscreen ? 0 : '8px',
-        width: '100%',
-        maxWidth: isFullscreen ? '100%' : '800px',
-        height: isFullscreen ? '100vh' : '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: isFullscreen ? 'none' : '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
-        border: isFullscreen ? 'none' : '1px solid #404040'
-      }}>
-        {/* Header */}
-        <div style={{
-          padding: '1.5rem',
-          borderBottom: '1px solid #404040',
+    <Dialog
+      open={true}
+      onClose={onClose}
+      maxWidth={isFullscreen ? false : 'md'}
+      fullWidth
+      fullScreen={isFullscreen || isMobile}
+      PaperProps={{
+        sx: {
+          height: isFullscreen ? '100vh' : '80vh',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0, color: '#49a2d4' }}>
+          flexDirection: 'column'
+        }
+      }}
+    >
+      <DialogTitle sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="h4" component="h3" sx={{ color: 'primary.main', mb: 1 }}>
               {title}
-            </h3>
-            <p style={{ color: '#a6a6a6', margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {description}
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <IconButton
               onClick={() => setIsFullscreen(!isFullscreen)}
-              style={{
-                padding: '0.5rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                fontSize: '1.2rem',
-                cursor: 'pointer',
-                color: '#a6a6a6',
-                borderRadius: '4px'
-              }}
+              size="small"
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
-              {isFullscreen ? '⊟' : '⊞'}
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                padding: '0.5rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-                color: '#a6a6a6'
-              }}
-            >
-              ×
-            </button>
-          </div>
-        </div>
+              {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+            </IconButton>
+            <IconButton onClick={onClose} size="small">
+              <Close />
+            </IconButton>
+          </Box>
+        </Box>
+      </DialogTitle>
 
-        {/* Messages */}
-        <div style={{
-          flex: 1,
-          padding: '1rem',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem'
-        }}>
-          {messages.length === 0 && (
-            <div style={{
-              textAlign: 'center',
-              color: '#a6a6a6',
-              fontSize: '0.9rem',
-              padding: '2rem'
-            }}>
+      <DialogContent sx={{ 
+        flex: 1, 
+        p: 2, 
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2
+      }}>
+        {messages.length === 0 && (
+          <Box sx={{ textAlign: 'center', p: 4 }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
               {type === 'framework' 
                 ? 'Ask me about teaching frameworks, pedagogical approaches, or educational strategies!'
-                : 'Describe what lesson you\'d like to create and I\'ll build a detailed plan using the 5-stage learning cycle!'
+                : 'Describe what lesson you\'d like to create and I\'ll build a detailed plan using the 4-stage Teaching and Learning Cycle!'
               }
-            </div>
-          )}
+            </Typography>
+          </Box>
+        )}
           
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              style={{
-                display: 'flex',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+        {messages.map((message, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+            }}
+          >
+            <Card
+              sx={{
+                maxWidth: '70%',
+                bgcolor: message.role === 'user' ? 'primary.main' : 'background.paper',
+                color: message.role === 'user' ? 'primary.contrastText' : 'text.primary',
+                border: message.role === 'assistant' ? 1 : 0,
+                borderColor: 'divider'
               }}
             >
-              <div
-                style={{
-                  maxWidth: '70%',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  backgroundColor: message.role === 'user' ? '#49a2d4' : '#292828',
-                  color: message.role === 'user' ? 'white' : '#ffffff',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.5',
-                  border: message.role === 'assistant' ? '1px solid #404040' : 'none'
-                }}
-              >
+              <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                 {message.role === 'assistant' ? (
                   (() => {
                     const interactiveData = parseInteractiveOptions(message.content);
@@ -360,33 +321,26 @@ const Chatbot = ({ type, title, description, onClose }) => {
                     if (interactiveData) {
                       return (
                         <>
-                          {/* Render content before options */}
                           {interactiveData.beforeOptions && (
                             <ReactMarkdown
-                              rehypePlugins={[]}
-                              remarkPlugins={[]}
                               components={{
-                                p: ({ children }) => <p style={{ margin: '0 0 0.5rem 0' }}>{children}</p>,
-                                ul: ({ children }) => <ul style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ul>,
-                                ol: ({ children }) => <ol style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ol>,
-                                li: ({ children }) => <li style={{ margin: '0.2rem 0' }}>{children}</li>,
-                                strong: ({ children }) => <strong style={{ fontWeight: '600' }}>{children}</strong>,
-                                em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
-                                h1: ({ children }) => <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h1>,
-                                h2: ({ children }) => <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h2>,
-                                h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h3>,
-                                h4: ({ children }) => <h4 style={{ fontSize: '0.95rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h4>,
-                                code: ({ children }) => <code style={{ backgroundColor: '#404040', padding: '0.2rem 0.4rem', borderRadius: '3px', fontSize: '0.85rem' }}>{children}</code>,
-                                blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>,
-                                div: ({ children, ...props }) => <div {...props}>{children}</div>
+                                p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                                ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                                ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                                li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
+                                strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
+                                em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
+                                h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
+                                blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
                               }}
-                              allowedElements={['p', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'br', 'div', 'span']}
                             >
                               {interactiveData.beforeOptions}
                             </ReactMarkdown>
                           )}
                           
-                          {/* Render interactive options */}
                           <InteractiveOptions
                             options={interactiveData.options}
                             messageIndex={index}
@@ -394,27 +348,21 @@ const Chatbot = ({ type, title, description, onClose }) => {
                             responseText={interactiveState.responseText}
                           />
                           
-                          {/* Render content after options */}
                           {interactiveData.afterOptions && (
                             <ReactMarkdown
-                              rehypePlugins={[]}
-                              remarkPlugins={[]}
                               components={{
-                                p: ({ children }) => <p style={{ margin: '0 0 0.5rem 0' }}>{children}</p>,
-                                ul: ({ children }) => <ul style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ul>,
-                                ol: ({ children }) => <ol style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ol>,
-                                li: ({ children }) => <li style={{ margin: '0.2rem 0' }}>{children}</li>,
-                                strong: ({ children }) => <strong style={{ fontWeight: '600' }}>{children}</strong>,
-                                em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
-                                h1: ({ children }) => <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h1>,
-                                h2: ({ children }) => <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h2>,
-                                h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h3>,
-                                h4: ({ children }) => <h4 style={{ fontSize: '0.95rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h4>,
-                                code: ({ children }) => <code style={{ backgroundColor: '#404040', padding: '0.2rem 0.4rem', borderRadius: '3px', fontSize: '0.85rem' }}>{children}</code>,
-                                blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>,
-                                div: ({ children, ...props }) => <div {...props}>{children}</div>
+                                p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                                ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                                ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                                li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
+                                strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
+                                em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
+                                h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                                code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
+                                blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
                               }}
-                              allowedElements={['p', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'br', 'div', 'span']}
                             >
                               {interactiveData.afterOptions}
                             </ReactMarkdown>
@@ -422,27 +370,21 @@ const Chatbot = ({ type, title, description, onClose }) => {
                         </>
                       );
                     } else {
-                      // Regular message without interactive options
                       return (
                         <ReactMarkdown
-                          rehypePlugins={[]}
-                          remarkPlugins={[]}
                           components={{
-                            p: ({ children }) => <p style={{ margin: '0 0 0.5rem 0' }}>{children}</p>,
-                            ul: ({ children }) => <ul style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ul>,
-                            ol: ({ children }) => <ol style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ol>,
-                            li: ({ children }) => <li style={{ margin: '0.2rem 0' }}>{children}</li>,
-                            strong: ({ children }) => <strong style={{ fontWeight: '600' }}>{children}</strong>,
-                            em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
-                            h1: ({ children }) => <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h1>,
-                            h2: ({ children }) => <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h2>,
-                            h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h3>,
-                            h4: ({ children }) => <h4 style={{ fontSize: '0.95rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h4>,
-                            code: ({ children }) => <code style={{ backgroundColor: '#404040', padding: '0.2rem 0.4rem', borderRadius: '3px', fontSize: '0.85rem' }}>{children}</code>,
-                            blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>,
-                            div: ({ children, ...props }) => <div {...props}>{children}</div>
+                            p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                            ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                            ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
+                            li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
+                            strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
+                            em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
+                            h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                            h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                            h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
+                            code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
+                            blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
                           }}
-                          allowedElements={['p', 'strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'br', 'div', 'span']}
                         >
                           {message.content}
                         </ReactMarkdown>
@@ -450,82 +392,56 @@ const Chatbot = ({ type, title, description, onClose }) => {
                     }
                   })()
                 ) : (
-                  <span style={{ whiteSpace: 'pre-wrap' }}>{message.content}</span>
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {message.content}
+                  </Typography>
                 )}
-              </div>
-            </div>
-          ))}
+              </CardContent>
+            </Card>
+          </Box>
+        ))}
           
-          {isLoading && (
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-start'
-            }}>
-              <div style={{
-                padding: '0.75rem 1rem',
-                borderRadius: '8px',
-                backgroundColor: '#292828',
-                color: '#a6a6a6',
-                fontSize: '0.9rem',
-                border: '1px solid #404040'
-              }}>
-                Thinking...
-              </div>
-            </div>
-          )}
-          
-          {/* Auto-scroll target */}
-          <div ref={messagesEndRef} />
-        </div>
+        {isLoading && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <Card sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
+              <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Thinking...
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        )}
+        
+        <div ref={messagesEndRef} />
+      </DialogContent>
 
-        {/* Input */}
-        <div style={{
-          padding: '1rem',
-          borderTop: '1px solid #404040',
-          display: 'flex',
-          gap: '0.5rem'
-        }}>
-          <textarea
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={type === 'framework' 
-              ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
-              : 'Describe the lesson you want to create...'
-            }
-            style={{
-              flex: 1,
-              padding: '0.75rem',
-              border: '1px solid #404040',
-              borderRadius: '6px',
-              resize: 'none',
-              minHeight: '80px',
-              fontFamily: 'inherit',
-              fontSize: '0.9rem',
-              backgroundColor: '#292828',
-              color: '#ffffff'
-            }}
-            disabled={isLoading}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={isLoading || !inputMessage.trim()}
-            style={{
-              padding: '0.75rem 1.5rem',
-              backgroundColor: isLoading || !inputMessage.trim() ? '#404040' : '#49a2d4',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: isLoading || !inputMessage.trim() ? 'not-allowed' : 'pointer',
-              fontWeight: '600',
-              alignSelf: 'flex-end'
-            }}
-          >
-            Send
-          </button>
-        </div>
-      </div>
-    </div>
+      <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={type === 'framework' 
+            ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
+            : 'Describe the lesson you want to create...'
+          }
+          disabled={isLoading}
+          variant="outlined"
+          size="small"
+        />
+        <Button
+          variant="contained"
+          onClick={sendMessage}
+          disabled={isLoading || !inputMessage.trim()}
+          sx={{ alignSelf: 'flex-end', minWidth: 'auto', px: 3 }}
+        >
+          Send
+        </Button>
+      </Box>
+    </Dialog>
   );
 };
 

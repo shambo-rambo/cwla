@@ -42,13 +42,13 @@ app.post('/api/framework-analysis', async (req, res) => {
 // Lesson Planner Chatbot
 app.post('/api/lesson-planner', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, conversationHistory = [] } = req.body;
     
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const result = await anthropicService.generateLessonPlan(message);
+    const result = await anthropicService.generateLessonPlan(message, conversationHistory);
     
     if (result.success) {
       res.json({ response: result.response });
@@ -64,13 +64,13 @@ app.post('/api/lesson-planner', async (req, res) => {
 // Framework Learning Chatbot (Enhanced with Knowledge Base)
 app.post('/api/framework-learning', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, conversationHistory = [] } = req.body;
     
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const result = await frameworkLearningService.generateFrameworkResponse(message);
+    const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
     
     if (result.success) {
       res.json({ response: result.response });

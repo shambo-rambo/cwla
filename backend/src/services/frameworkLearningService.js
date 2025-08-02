@@ -27,7 +27,7 @@ class FrameworkLearningService {
     }
   }
 
-  async generateFrameworkResponse(userInput) {
+  async generateFrameworkResponse(userInput, conversationHistory = []) {
     try {
       if (!this.knowledgeBase) {
         return {
@@ -45,13 +45,15 @@ class FrameworkLearningService {
       );
 
       if (isLessonRequest) {
-        const response = await anthropic.messages.create({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000, // Reduced for faster response
-          messages: [
-            {
-              role: 'user',
-              content: `You're a helpful TLC framework expert. The teacher asked: "${userInput}"
+        // Build messages array with conversation history + system prompt
+        const messages = conversationHistory.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+        
+        messages.push({
+          role: 'user',
+          content: `You're a helpful TLC framework expert. The teacher asked: "${userInput}"
 
 They want lesson plans or activities, but you're the framework expert, not the lesson planner. Respond directly but helpfully.
 
@@ -62,8 +64,12 @@ Keep it concise and helpful (under 100 words):
 - Be friendly but direct
 
 IMPORTANT: You must include the clickable markdown link exactly as shown above. Use markdown **bold** for key points. No rambling or overly personal tone.`
-            }
-          ]
+        });
+
+        const response = await anthropic.messages.create({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000, // Reduced for faster response
+          messages: messages
         });
 
         return {
@@ -137,15 +143,21 @@ ALWAYS use interactive options for:
 
 Respond in a friendly but direct way. Use markdown formatting with **bold** for key points and bullet points for tips. Keep responses concise and focused on practical help. Include interactive options when it would help guide the conversation.`
 
+      // Build messages array with conversation history + system prompt
+      const messages = conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      messages.push({
+        role: 'user',
+        content: prompt
+      });
+
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1500, // Reduced from 2000 for faster response
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
+        messages: messages
       });
 
       return {

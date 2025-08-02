@@ -53,9 +53,9 @@ Keep your response structured, practical, and focused on actionable advice for e
     }
   }
 
-  async generateLessonPlan(userInput) {
+  async generateLessonPlan(userInput, conversationHistory = []) {
     try {
-      const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the 5-stage Teaching and Learning Cycle.
+      const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the 4-stage Teaching and Learning Cycle (TLC).
 
 User Request: "${userInput}"
 
@@ -67,30 +67,29 @@ Create a comprehensive lesson plan with the following structure:
 - Duration:
 - Learning Objectives:
 
-**STAGE 1: ENGAGE** (5-10 minutes)
-- Hook activity to capture interest
-- Prior knowledge activation
-- Essential question introduction
+**STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
+- Activate prior knowledge and build context
+- Introduce key vocabulary and concepts
+- Explore the topic through discussion and shared activities
+- Set the purpose for learning
 
-**STAGE 2: EXPLORE** (15-20 minutes)
-- Hands-on investigation activities
-- Student-led discovery tasks
-- Collaborative learning opportunities
+**STAGE 2: MODELING AND DECONSTRUCTION** (25-30% of lesson time)  
+- Teacher demonstrates or models the skill/concept
+- Break down examples step-by-step
+- Identify key features and patterns
+- Joint analysis of mentor texts or examples
 
-**STAGE 3: EXPLAIN** (10-15 minutes)
-- Clear concept explanations
-- Vocabulary introduction
-- Teacher-guided instruction
+**STAGE 3: JOINT CONSTRUCTION** (30-35% of lesson time)
+- Teacher and students work together
+- Guided practice with scaffolding
+- Collaborative problem-solving or writing
+- Strategic questioning and feedback
 
-**STAGE 4: ELABORATE** (15-20 minutes)
-- Application to new contexts
-- Extended learning activities
-- Cross-curricular connections
-
-**STAGE 5: EVALUATE** (5-10 minutes)
-- Formative assessment strategies
-- Student reflection activities
-- Success criteria check
+**STAGE 4: INDEPENDENT CONSTRUCTION** (20-25% of lesson time)
+- Students work independently
+- Apply learning to new contexts
+- Individual assessment tasks
+- Self-reflection and peer feedback
 
 **RESOURCES NEEDED**
 - Materials list
@@ -104,15 +103,21 @@ Create a comprehensive lesson plan with the following structure:
 
 Make it practical, detailed, and immediately usable by teachers.`;
 
+      // Build messages array with conversation history + system prompt
+      const messages = conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      messages.push({
+        role: 'user',
+        content: prompt
+      });
+
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1800, // Reduced for faster response
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
+        messages: messages
       });
 
       return {
