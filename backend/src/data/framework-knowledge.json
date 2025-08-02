@@ -1,0 +1,558 @@
+{
+  "knowledge_base": {
+    "metadata": {
+      "title": "Teaching and Learning Cycle Implementation Guide",
+      "version": "2.0",
+      "last_updated": "2025-01-31",
+      "target_audience": "Secondary school teachers",
+      "evidence_base": "95% student improvement rate with proper implementation"
+    },
+    "topics": [
+      {
+        "id": "tlc_overview",
+        "title": "TLC Framework Overview",
+        "category": "foundation",
+        "difficulty": "beginner",
+        "keywords": ["vygotskian", "scaffolding", "genre-based", "explicit teaching"],
+        "summary": "Core philosophy and principles of the Teaching and Learning Cycle",
+        "content": {
+          "core_philosophy": "High expectations supported by strong scaffolding and explicit teaching based on Vygotskian principles",
+          "key_principles": [
+            "Activities carefully ordered to build knowledge and abilities",
+            "Not a strict sequence - teachers move between stages as needed",
+            "Deep learning of content with language of content area",
+            "Constant assessment and response to identified needs"
+          ],
+          "teacher_responsibilities": [
+            "Identify language demands of tasks",
+            "Explicitly teach genres needed for school success",
+            "Focus on content and language learning simultaneously",
+            "Make learning intentions and success criteria explicit",
+            "Constantly assess and respond to student needs"
+          ]
+        },
+        "related_topics": ["tlc_stages", "implementation_challenges", "assessment_approaches"],
+        "teacher_queries": [
+          "What is the Teaching and Learning Cycle?",
+          "How does TLC differ from traditional teaching?",
+          "What are the core principles of TLC?"
+        ]
+      },
+      {
+        "id": "implementation_challenges",
+        "title": "Common Implementation Challenges and Solutions",
+        "category": "practical_guidance",
+        "difficulty": "intermediate",
+        "keywords": ["time management", "scaffolding", "differentiation", "professional development"],
+        "summary": "Five major challenges teachers face with evidence-based solutions",
+        "content": {
+          "challenge_1": {
+            "problem": "Time Constraints",
+            "description": "Teachers struggle to fit comprehensive genre instruction within tight curriculum schedules",
+            "solution": {
+              "strategy": "Strategic curriculum mapping with optimal time allocation",
+              "time_allocation": {
+                "field_building": "15-20%",
+                "modeling": "25-30%",
+                "guided_practice": "30-35%", 
+                "independent_construction": "20-25%"
+              },
+              "practical_tips": [
+                "Create 'must do/could do' prioritization systems",
+                "Map buffer days for review and catch-up",
+                "Focus on essential learning while maintaining flexibility"
+              ]
+            }
+          },
+          "challenge_2": {
+            "problem": "Inadequate Scaffolding Skills",
+            "description": "Teachers lack confidence in providing graduated support for diverse proficiency levels",
+            "solution": {
+              "strategy": "Collaborative planning and systematic professional development",
+              "practical_tips": [
+                "Share scaffolding strategies between teachers",
+                "Slow down modeling stage with thorough text deconstruction",
+                "Use think-aloud protocols during joint construction",
+                "Focus on theoretical foundation to improve application"
+              ]
+            }
+          }
+        },
+        "success_metrics": {
+          "student_outcomes": "95% show improved literacy outcomes with systematic implementation",
+          "teacher_feedback": "Comprehensive PD with mentoring produces superior outcomes"
+        },
+        "related_topics": ["time_management", "professional_development", "differentiation_strategies"],
+        "teacher_queries": [
+          "How do I find time to implement the full TLC?",
+          "What if I'm not confident with scaffolding?",
+          "How do I balance TLC with exam requirements?"
+        ]
+      },
+      {
+        "id": "differentiation_strategies",
+        "title": "Comprehensive Differentiation Strategies",
+        "category": "inclusive_practice",
+        "difficulty": "advanced",
+        "keywords": ["EAL/D", "learning difficulties", "gifted students", "UDL", "inclusive"],
+        "summary": "Evidence-based approaches for supporting diverse learners through TLC",
+        "content": {
+          "eald_support": {
+            "approach": "Enhanced Teaching and Learning Cycle",
+            "field_building_adaptations": [
+              "Use visual materials to support vocabulary development",
+              "Elicit prior knowledge in home languages",
+              "Provide home language resources for family study",
+              "Create multilingual word walls"
+            ],
+            "modeling_adaptations": [
+              "Pre-teach metalanguage required for analysis",
+              "Use abridged texts with visual supports",
+              "Allow annotation in home languages",
+              "Create anchor charts with visual references"
+            ],
+            "assessment_adaptations": [
+              "Use EAL/D Learning Progressions",
+              "Provide alternative assessment modes",
+              "Separate content knowledge from language proficiency",
+              "Support multilingual text creation"
+            ]
+          },
+          "learning_difficulties": {
+            "approach": "Universal Design for Learning principles",
+            "representation": ["Visual aids and diagrams", "Audio with text-to-speech", "Graphic organizers", "Chunked information"],
+            "engagement": ["Flexible grouping", "Multisensory approaches", "Movement activities", "Clear routines"],
+            "expression": ["Choice in demonstration methods", "Alternative formats", "Extended time", "Modified expectations"]
+          },
+          "advanced_learners": {
+            "content_acceleration": ["Pre-assessment and compacting", "Tiered assignments", "Independent study", "Advanced resources"],
+            "product_expectations": ["Professional standards", "Authentic audiences", "Self-directed learning", "Problem-based scenarios"]
+          }
+        },
+        "related_topics": ["tlc_stages", "assessment_approaches", "inclusive_practice"],
+        "teacher_queries": [
+          "How do I support EAL/D students in TLC?",
+          "What about students with learning difficulties?",
+          "How do I challenge advanced learners?"
+        ]
+      },
+      {
+        "id": "subject_applications",
+        "title": "Subject-Specific TLC Applications",
+        "category": "curriculum_integration",
+        "difficulty": "intermediate",
+        "keywords": ["english", "science", "mathematics", "history", "geography", "cross-curricular"],
+        "summary": "Adapted TLC approaches for different secondary learning areas",
+        "content": {
+          "english_literacy": {
+            "focus": "Genre-based teaching with mentor texts",
+            "time_management": {
+              "narrative_units": "2-3 weeks",
+              "expository_units": "3-4 weeks",
+              "daily_vocabulary": "15 minutes",
+              "guided_reading": "weekly rotations"
+            },
+            "key_strategies": ["Text deconstruction", "Academic language development", "Integrated skills approach"]
+          },
+          "science": {
+            "model_integration": "5E Model (Engage, Explore, Explain, Elaborate, Evaluate)",
+            "tlc_alignment": {
+              "engage_explore": "Build the Field phase",
+              "explain": "Modeling phase", 
+              "elaborate": "Joint/Independent Construction",
+              "evaluate": "Throughout all phases"
+            },
+            "time_allocation": {
+              "hands_on_investigation": "25%",
+              "concept_development": "35%",
+              "scientific_writing": "integrated throughout"
+            }
+          },
+          "mathematics": {
+            "approach": "Problem-based learning with explicit instruction",
+            "tools": ["Manipulatives", "Visual models", "Technology integration"],
+            "pacing": {
+              "spiral_review": "built into each unit",
+              "mental_math": "10-15 minutes daily",
+              "problem_solving": "weekly extended sessions"
+            }
+          }
+        },
+        "related_topics": ["tlc_stages", "time_management", "digital_tools"],
+        "teacher_queries": [
+          "How does TLC work in Science?",
+          "Can I use TLC for Mathematics?",
+          "What about other subject areas?"
+        ]
+      },
+      {
+        "id": "digital_tools",
+        "title": "Digital Tools and Technologies",
+        "category": "technology_integration",
+        "difficulty": "intermediate",
+        "keywords": ["edtech", "assessment", "collaboration", "engagement", "analytics"],
+        "summary": "Strategic technology integration to enhance TLC implementation",
+        "content": {
+          "planning_assessment": {
+            "learning_analytics": ["Discovery Education", "Google Workspace analytics", "Learning Ladders"],
+            "curriculum_resources": ["Nearpod Library (22,000+ lessons)", "Standards-aligned content"]
+          },
+          "interactive_teaching": {
+            "real_time_engagement": ["Nearpod", "Poll Everywhere", "Pear Deck", "Kahoot"],
+            "content_creation": ["Seesaw", "Padlet", "Flipgrid", "Google Workspace"]
+          },
+          "communication": {
+            "parent_engagement": ["ClassDojo", "Remind (70+ languages)", "ParentSquare", "TalkingPoints"],
+            "teacher_collaboration": ["Microsoft Teams", "Slack", "Google Workspace"]
+          }
+        },
+        "implementation_tips": [
+          "Choose tools that enhance rather than complicate pedagogy",
+          "Start with one tool per TLC stage",
+          "Ensure accessibility and inclusion",
+          "Provide adequate teacher training"
+        ],
+        "related_topics": ["teacher_collaboration", "parent_engagement", "assessment_approaches"],
+        "teacher_queries": [
+          "What digital tools support TLC?",
+          "How do I choose the right technology?",
+          "What about parent communication tools?"
+        ]
+      },
+      {
+        "id": "troubleshooting_scenarios",
+        "title": "Troubleshooting Common TLC Implementation Issues",
+        "category": "practical_support",
+        "difficulty": "intermediate",
+        "keywords": ["problems", "solutions", "classroom management", "student engagement", "implementation"],
+        "summary": "Evidence-based solutions for common TLC implementation challenges",
+        "content": {
+          "engagement_issues": {
+            "scenario": "Students are disengaged during text deconstruction/modeling",
+            "symptoms": ["Students not participating", "Side conversations", "Glazed expressions", "Passive listening"],
+            "immediate_solutions": [
+              "Switch to interactive annotation - give students colored pens to mark features",
+              "Use think-pair-share: 'Find one example of [language feature] with your partner'",
+              "Create competition: 'Which table can find the most examples of persuasive language?'",
+              "Break into smaller chunks: analyze one paragraph at a time with movement breaks"
+            ],
+            "prevention_strategies": [
+              "Choose texts slightly above but accessible to student level",
+              "Use texts relevant to student interests and experiences", 
+              "Limit modeling sessions to 15-20 minutes maximum",
+              "Build in regular 'turn and talk' opportunities"
+            ],
+            "lesson_planner_note": "Use our lesson planner chatbot to create engaging text deconstruction activities with built-in interaction points."
+          },
+          "joint_construction_chaos": {
+            "scenario": "Joint construction becomes chaotic or dominated by few students",
+            "symptoms": ["Shouting out answers", "Few students participating", "Off-topic suggestions", "Teacher doing most of the work"],
+            "immediate_solutions": [
+              "Use 'hands up, thumbs up' - students suggest, others vote before writing",
+              "Implement talking stick/token system for contributions",
+              "Use 'no hands up' random selection from class list",
+              "Break into small groups first, then share ideas with whole class"
+            ],
+            "prevention_strategies": [
+              "Establish clear discussion protocols before starting",
+              "Use collaborative sentence starters posted on walls",
+              "Pre-plan key questions to guide student thinking",
+              "Assign specific roles: idea generator, language improver, connector"
+            ],
+            "lesson_planner_note": "Request joint construction lessons with specific classroom management strategies from our lesson planner."
+          },
+          "independent_writing_struggles": {
+            "scenario": "Students can't generate ideas during independent construction",
+            "symptoms": ["Blank pages", "'I don't know what to write'", "Copying from mentor texts", "Very short responses"],
+            "immediate_solutions": [
+              "Return to field building - brainstorm topic ideas as a class",
+              "Provide graphic organizers specific to the genre",
+              "Allow peer collaboration for idea generation (not writing)",
+              "Use sentence starters or paragraph frames as scaffolds"
+            ],
+            "prevention_strategies": [
+              "Ensure adequate field building time before independent work",
+              "Create class idea banks during joint construction",
+              "Provide choice within genre parameters",
+              "Use mentor texts to generate topic possibilities"
+            ],
+            "lesson_planner_note": "Generate scaffolded independent writing activities with idea generation support using our lesson planner."
+          },
+          "time_management_crisis": {
+            "scenario": "Running out of time in TLC unit",
+            "symptoms": ["Rushing through stages", "Skipping modeling", "No time for revision", "Pressure to finish"],
+            "immediate_solutions": [
+              "Prioritize: focus on 2-3 key genre features rather than everything",
+              "Combine stages: do brief modeling during joint construction",
+              "Use homework for field building or reading mentor texts",
+              "Accept shorter texts but maintain genre integrity"
+            ],
+            "prevention_strategies": [
+              "Plan realistic timelines with buffer days",
+              "Use curriculum mapping to identify available time",
+              "Start with shorter units and gradually extend",
+              "Build assessment into the cycle rather than adding at end"
+            ],
+            "quality_check": "Better to do fewer genre features well than rush through everything"
+          },
+          "student_resistance": {
+            "scenario": "Students resist structured TLC approach",
+            "symptoms": ["'This is boring'", "'Why can't we just write?'", "Preference for 'creative' writing", "Questioning the process"],
+            "immediate_solutions": [
+              "Explain the purpose: 'This helps you write powerfully in any situation'",
+              "Show real-world examples: job applications, social media posts, university essays",
+              "Celebrate improvements in student writing with before/after comparisons",
+              "Allow some choice within genre constraints"
+            ],
+            "prevention_strategies": [
+              "Connect genres to student goals and interests",
+              "Share success stories from other students",
+              "Involve students in setting writing goals",
+              "Acknowledge that structure enables creativity, not limits it"
+            ],
+            "lesson_planner_note": "Request engaging TLC lessons that connect to student interests and real-world applications."
+          },
+          "assessment_gaps": {
+            "scenario": "Assessment shows students haven't grasped genre features",
+            "symptoms": ["Missing key structural elements", "Inappropriate language choices", "Poor organization", "Confusion about purpose"],
+            "immediate_solutions": [
+              "Return to modeling stage with different mentor texts",
+              "Use peer assessment to identify good examples in class work",
+              "Conference individually to identify specific needs",
+              "Provide revision opportunities with targeted feedback"
+            ],
+            "prevention_strategies": [
+              "Use formative assessment throughout each stage",
+              "Check understanding with exit tickets and quick writes",
+              "Use co-constructed success criteria with students",
+              "Build in reflection time at each stage"
+            ],
+            "lesson_planner_note": "Create assessment-integrated TLC lessons with built-in formative checks using our lesson planner."
+          },
+          "technology_failures": {
+            "scenario": "Digital tools aren't working during TLC lessons",
+            "symptoms": ["Students can't access resources", "Apps crashing", "Network problems", "Unequal device access"],
+            "immediate_solutions": [
+              "Have analog backups ready: printed texts, paper activities",
+              "Use one device/projection for whole class when individual access fails",
+              "Pair students to share devices",
+              "Switch to discussion-based activities while problems resolve"
+            ],
+            "prevention_strategies": [
+              "Test all technology before lessons",
+              "Have printed alternatives prepared",
+              "Train students in basic troubleshooting",
+              "Use simple, reliable tools rather than complex platforms"
+            ],
+            "technology_philosophy": "Technology should enhance TLC, not drive it. The pedagogy remains strong without digital tools."
+          },
+          "mixed_ability_management": {
+            "scenario": "Students have vastly different writing abilities in same class",
+            "symptoms": ["Some finish quickly, others struggle to start", "Frustrated advanced learners", "Overwhelmed struggling writers", "Wide gap in text quality"],
+            "immediate_solutions": [
+              "Use tiered activities: same genre, different complexity levels",
+              "Implement peer mentoring with clear protocols",
+              "Provide extension activities for early finishers",
+              "Offer choice in text length while maintaining genre features"
+            ],
+            "prevention_strategies": [
+              "Pre-assess student abilities and group accordingly",
+              "Use flexible grouping throughout the cycle",
+              "Differentiate mentor texts by reading level",
+              "Apply UDL principles from the start"
+            ],
+            "lesson_planner_note": "Request differentiated TLC lessons for mixed ability classes from our lesson planner."
+          }
+        },
+        "related_topics": ["implementation_challenges", "differentiation_strategies", "assessment_approaches"],
+        "teacher_queries": [
+          "My students aren't engaged during modeling - what do I do?",
+          "How do I manage joint construction with 30 students?",
+          "What if students can't think of anything to write?",
+          "I'm running out of time - how do I finish the unit?",
+          "Students are resisting the structured approach - help!"
+        ]
+      },
+      {
+        "id": "quality_indicators",
+        "title": "TLC Implementation Quality Indicators",
+        "category": "self_assessment",
+        "difficulty": "advanced",
+        "keywords": ["implementation quality", "success criteria", "self-reflection", "improvement"],
+        "summary": "How to recognize effective TLC implementation and identify areas for improvement",
+        "content": {
+          "successful_field_building": {
+            "you_know_its_working_when": [
+              "Students actively contribute relevant prior knowledge",
+              "Rich discussions emerge about the topic",
+              "Students use new vocabulary in conversation",
+              "Everyone can participate regardless of background knowledge"
+            ],
+            "warning_signs": [
+              "Only a few students contribute to discussions",
+              "Students seem confused about basic topic concepts",
+              "New vocabulary isn't being used or understood",
+              "You're doing most of the talking"
+            ],
+            "quick_check": "Can students explain the topic to a partner using new vocabulary?"
+          },
+          "effective_modeling": {
+            "you_know_its_working_when": [
+              "Students can identify key genre features independently",
+              "They ask questions about language choices",
+              "Students make connections between structure and purpose",
+              "They can explain why authors made specific decisions"
+            ],
+            "warning_signs": [
+              "Students passively listen without engagement",
+              "They can't find examples when asked",
+              "No questions or comments about the text",
+              "Students seem confused about genre features"
+            ],
+            "quick_check": "Students can find and explain one genre feature in a new text"
+          },
+          "successful_joint_construction": {
+            "you_know_its_working_when": [
+              "Multiple students contribute ideas and language",
+              "Students build on each other's suggestions",
+              "They debate language choices and make improvements",
+              "The text sounds authentically student-generated"
+            ],
+            "warning_signs": [
+              "Teacher provides most of the content",
+              "Same students dominate contributions",
+              "Little discussion about language choices",
+              "Students seem disengaged from the process"
+            ],
+            "quick_check": "Students can explain why specific language choices were made"
+          },
+          "effective_independent_construction": {
+            "you_know_its_working_when": [
+              "Students use genre features appropriately",
+              "They attempt language patterns from mentor texts",
+              "Students seek help when needed",
+              "Writing shows clear understanding of purpose and audience"
+            ],
+            "warning_signs": [
+              "Students revert to familiar patterns ignoring genre",
+              "Many students struggle to get started",
+              "Limited use of modeled language features",
+              "Writing doesn't match genre expectations"
+            ],
+            "quick_check": "Student writing demonstrates key genre features taught"
+          },
+          "overall_implementation_health": {
+            "strong_indicators": [
+              "Students can articulate why they're learning specific genres",
+              "Writing quality improves measurably over time",
+              "Students transfer learning to other contexts",
+              "Both content and language learning are evident",
+              "Students take ownership of their writing development"
+            ],
+            "areas_for_development": [
+              "Focus on surface features without deep understanding",
+              "Students complete tasks but don't understand purpose",
+              "Limited transfer to other writing situations",
+              "Either content OR language emphasized, not both",
+              "Students dependent on teacher for all decisions"
+            ]
+          },
+          "self_reflection_questions": [
+            "Are my students talking about texts like writers?",
+            "Do students understand why we're learning this genre?",
+            "Can students identify good examples in their own and others' writing?",
+            "Are students becoming more independent writers?",
+            "Do students see connections between reading and writing?"
+          ]
+        },
+        "improvement_strategies": {
+          "if_field_building_weak": "Spend more time on hands-on activities and real-world connections before introducing texts",
+          "if_modeling_ineffective": "Use shorter texts, more interaction, and collaborative annotation",
+          "if_joint_construction_teacher_dominated": "Ask more questions, wait longer for responses, use talking protocols",
+          "if_independent_writing_struggles": "Return to modeling, provide more scaffolds, allow peer collaboration"
+        },
+        "related_topics": ["troubleshooting_scenarios", "implementation_challenges", "assessment_approaches"],
+        "teacher_queries": [
+          "How do I know if my TLC implementation is working?",
+          "What should I look for in student responses?",
+          "How can I improve my modeling stage?",
+          "Am I doing joint construction correctly?"
+        ]
+      }
+    ],
+    "lesson_planner_integration": {
+      "purpose": "Connect teachers to detailed lesson planning support",
+      "key_messages": [
+        "For detailed lesson plans implementing these TLC strategies, use our companion lesson planner chatbot",
+        "The lesson planner creates customized lessons based on your specific genre, year level, and student needs",
+        "Request specific scaffolding strategies and activities through the lesson planner",
+        "The lesson planner can generate differentiated materials for diverse learners",
+        "Use the lesson planner for assessment tasks and rubrics aligned with TLC principles"
+      ],
+      "when_to_mention": [
+        "When teachers ask for specific lesson plans or activities",
+        "When discussing implementation of any TLC stage",
+        "When teachers need differentiated materials or assessments",
+        "When troubleshooting requires specific lesson modifications",
+        "When teachers want subject-specific applications"
+      ],
+      "sample_prompts_for_lesson_planner": [
+        "Create a field building lesson for Year 9 persuasive writing using current social issues",
+        "Generate a text deconstruction activity for scientific explanation with EAL/D supports", 
+        "Design joint construction lesson for historical recount with behavior management strategies",
+        "Develop independent writing assessment with differentiated success criteria"
+      ]
+    },
+    "quick_reference": {
+      "tlc_stages": [
+        {
+          "stage": "Building the Field", 
+          "purpose": "Develop shared understanding and topic knowledge",
+          "time": "15-20%",
+          "key_activities": ["Prior knowledge activation", "Content exploration", "Vocabulary building"]
+        },
+        {
+          "stage": "Modeling and Deconstruction",
+          "purpose": "Make genre features visible through text analysis", 
+          "time": "25-30%",
+          "key_activities": ["Mentor text analysis", "Language feature identification", "Joint annotation"]
+        },
+        {
+          "stage": "Joint Construction",
+          "purpose": "Collaborative text creation with teacher guidance",
+          "time": "30-35%", 
+          "key_activities": ["Shared writing", "Strategic questioning", "Collaborative decision-making"]
+        },
+        {
+          "stage": "Independent Construction",
+          "purpose": "Students create original texts with appropriate scaffolding",
+          "time": "20-25%",
+          "key_activities": ["Individual writing", "Peer conferencing", "Self-assessment"]
+        }
+      ],
+      "genre_families": [
+        {"family": "Storying", "purpose": "Recounting and narrating", "examples": ["Personal recount", "Narrative", "Historical account"]},
+        {"family": "Explaining", "purpose": "How and why explanations", "examples": ["Sequential explanation", "Causal explanation", "System explanation"]},
+        {"family": "Persuading", "purpose": "Arguing and discussing viewpoints", "examples": ["Argument", "Discussion", "Review"]},
+        {"family": "Describing", "purpose": "Describing and classifying", "examples": ["Descriptive report", "Information report", "Comparative report"]}
+      ]
+    },
+    "teacher_faq": [
+      {
+        "question": "How long does it take to implement TLC effectively?",
+        "answer": "Research shows deep implementation takes 2-3 years with systematic support. Start with one stage and gradually expand. 95% of students show improvement when schools commit to comprehensive professional development.",
+        "related_topics": ["implementation_challenges", "professional_development"]
+      },
+      {
+        "question": "What if my students are at very different levels?",
+        "answer": "Use the Enhanced TLC for EAL/D students, UDL principles for learning difficulties, and acceleration strategies for advanced learners. The key is flexible grouping and tiered materials while maintaining genre integrity.",
+        "related_topics": ["differentiation_strategies", "inclusive_practice"]
+      },
+      {
+        "question": "How do I assess student progress in TLC?",
+        "answer": "Use the Slide Rubric for growth-based assessment, combine formative and summative approaches, and focus on genre-specific criteria. Separate content knowledge from language proficiency for EAL/D students.",
+        "related_topics": ["assessment_approaches", "differentiation_strategies"]
+      }
+    ]
+  }
+}

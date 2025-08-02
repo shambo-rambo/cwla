@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const anthropicService = require('./services/anthropicService');
+const frameworkLearningService = require('./services/frameworkLearningService');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -56,6 +57,28 @@ app.post('/api/lesson-planner', async (req, res) => {
     }
   } catch (error) {
     console.error('Lesson planner error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Framework Learning Chatbot (Enhanced with Knowledge Base)
+app.post('/api/framework-learning', async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const result = await frameworkLearningService.generateFrameworkResponse(message);
+    
+    if (result.success) {
+      res.json({ response: result.response });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    console.error('Framework learning error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const Chatbot = ({ type, title, description, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -14,7 +15,7 @@ const Chatbot = ({ type, title, description, onClose }) => {
     setIsLoading(true);
 
     try {
-      const endpoint = type === 'framework' ? '/api/framework-analysis' : '/api/lesson-planner';
+      const endpoint = type === 'framework' ? '/api/framework-learning' : '/api/lesson-planner';
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
@@ -141,13 +142,32 @@ const Chatbot = ({ type, title, description, onClose }) => {
                   borderRadius: '8px',
                   backgroundColor: message.role === 'user' ? '#49a2d4' : '#292828',
                   color: message.role === 'user' ? 'white' : '#ffffff',
-                  whiteSpace: 'pre-wrap',
                   fontSize: '0.9rem',
                   lineHeight: '1.5',
                   border: message.role === 'assistant' ? '1px solid #404040' : 'none'
                 }}
               >
-                {message.content}
+                {message.role === 'assistant' ? (
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p style={{ margin: '0 0 0.5rem 0' }}>{children}</p>,
+                      ul: ({ children }) => <ul style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ul>,
+                      ol: ({ children }) => <ol style={{ margin: '0.5rem 0', paddingLeft: '1.2rem' }}>{children}</ol>,
+                      li: ({ children }) => <li style={{ margin: '0.2rem 0' }}>{children}</li>,
+                      strong: ({ children }) => <strong style={{ fontWeight: '600' }}>{children}</strong>,
+                      em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
+                      h1: ({ children }) => <h1 style={{ fontSize: '1.2rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h1>,
+                      h2: ({ children }) => <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h2>,
+                      h3: ({ children }) => <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0.5rem 0', color: '#49a2d4' }}>{children}</h3>,
+                      code: ({ children }) => <code style={{ backgroundColor: '#404040', padding: '0.2rem 0.4rem', borderRadius: '3px', fontSize: '0.85rem' }}>{children}</code>,
+                      blockquote: ({ children }) => <blockquote style={{ borderLeft: '3px solid #49a2d4', paddingLeft: '0.8rem', margin: '0.5rem 0', fontStyle: 'italic' }}>{children}</blockquote>
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                ) : (
+                  <span style={{ whiteSpace: 'pre-wrap' }}>{message.content}</span>
+                )}
               </div>
             </div>
           ))}
