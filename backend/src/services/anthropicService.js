@@ -31,7 +31,7 @@ Keep your response structured, practical, and focused on actionable advice for e
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200, // Reduced for faster response
+        max_tokens: 600, // Optimized for speed
         messages: [
           {
             role: 'user',
@@ -214,7 +214,7 @@ Make it practical, detailed, and immediately usable.`
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 600,
         messages: messages
       });
 
@@ -441,8 +441,9 @@ Create a comprehensive lesson plan with the following structure:
 
 Make it practical, detailed, and immediately usable by teachers.`;
 
-      // Build messages array with conversation history + system prompt
-      const messages = conversationHistory.map(msg => ({
+      // Build messages array with LIMITED conversation history for speed (last 6 messages)
+      const limitedHistory = conversationHistory.slice(-6);
+      const messages = limitedHistory.map(msg => ({
         role: msg.role,
         content: msg.content
       }));
@@ -454,7 +455,7 @@ Make it practical, detailed, and immediately usable by teachers.`;
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200, // Reduced for faster response
+        max_tokens: 600, // Optimized for speed
         messages: messages
       });
 

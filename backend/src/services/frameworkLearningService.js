@@ -68,7 +68,7 @@ IMPORTANT: You must include the clickable markdown link exactly as shown above. 
 
         const response = await anthropic.messages.create({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000, // Reduced for faster response
+          max_tokens: 600, // Optimized for speed
           messages: messages
         });
 
@@ -156,7 +156,7 @@ Respond in a friendly but direct way. Use markdown formatting with **bold** for 
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500, // Reduced from 2000 for faster response
+        max_tokens: 800, // Optimized for speed
         messages: messages
       });
 

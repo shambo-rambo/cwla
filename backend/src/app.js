@@ -54,8 +54,8 @@ app.post('/api/lesson-planner', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Check chat limits if user info provided
-    if (userId && conversationId) {
+    // Check chat limits if user info provided (skip in development for speed)
+    if (userId && conversationId && process.env.NODE_ENV === 'production') {
       try {
         const limitCheck = await db.checkChatLimits(userId, 'lesson', conversationId);
         if (limitCheck.exceedsLimit) {
@@ -74,18 +74,20 @@ app.post('/api/lesson-planner', async (req, res) => {
     const result = await anthropicService.generateLessonPlan(message, conversationHistory);
     
     if (result.success) {
-      // Save messages to database if conversation info provided
-      if (conversationId && userId) {
-        try {
-          await db.saveMessage(conversationId, 'user', message);
-          await db.saveMessage(conversationId, 'assistant', result.response);
-        } catch (dbError) {
-          console.error('Error saving messages to database:', dbError);
-          // Continue with response even if DB save fails
-        }
-      }
-      
+      // Send response immediately for speed
       res.json({ response: result.response });
+      
+      // Save messages to database asynchronously (fire-and-forget)
+      if (conversationId && userId) {
+        setImmediate(async () => {
+          try {
+            await db.saveMessage(conversationId, 'user', message);
+            await db.saveMessage(conversationId, 'assistant', result.response);
+          } catch (dbError) {
+            console.error('Error saving messages to database:', dbError);
+          }
+        });
+      }
     } else {
       res.status(500).json({ error: result.error });
     }
@@ -104,8 +106,8 @@ app.post('/api/framework-learning', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Check chat limits if user info provided
-    if (userId && conversationId) {
+    // Check chat limits if user info provided (skip in development for speed)
+    if (userId && conversationId && process.env.NODE_ENV === 'production') {
       try {
         const limitCheck = await db.checkChatLimits(userId, 'framework', conversationId);
         if (limitCheck.exceedsLimit) {
@@ -124,18 +126,20 @@ app.post('/api/framework-learning', async (req, res) => {
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
     
     if (result.success) {
-      // Save messages to database if conversation info provided
-      if (conversationId && userId) {
-        try {
-          await db.saveMessage(conversationId, 'user', message);
-          await db.saveMessage(conversationId, 'assistant', result.response);
-        } catch (dbError) {
-          console.error('Error saving messages to database:', dbError);
-          // Continue with response even if DB save fails
-        }
-      }
-      
+      // Send response immediately for speed
       res.json({ response: result.response });
+      
+      // Save messages to database asynchronously (fire-and-forget)
+      if (conversationId && userId) {
+        setImmediate(async () => {
+          try {
+            await db.saveMessage(conversationId, 'user', message);
+            await db.saveMessage(conversationId, 'assistant', result.response);
+          } catch (dbError) {
+            console.error('Error saving messages to database:', dbError);
+          }
+        });
+      }
     } else {
       res.status(500).json({ error: result.error });
     }
