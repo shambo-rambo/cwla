@@ -93,10 +93,13 @@ class DatabaseService {
   async getUserConversations(userId, limit = 50) {
     try {
       const result = await this.pool.query(
-        `SELECT id, chat_type, title, created_at, updated_at 
-         FROM conversations 
-         WHERE user_id = $1 
-         ORDER BY updated_at DESC 
+        `SELECT c.id, c.chat_type, c.title, c.created_at, c.updated_at,
+                COUNT(m.id) as message_count
+         FROM conversations c
+         LEFT JOIN messages m ON c.id = m.conversation_id
+         WHERE c.user_id = $1 
+         GROUP BY c.id
+         ORDER BY c.updated_at DESC 
          LIMIT $2`,
         [userId, limit]
       );
@@ -148,6 +151,64 @@ class DatabaseService {
       return result.rows;
     } catch (error) {
       console.error('Error getting admin conversations:', error);
+      throw error;
+    }
+  }
+
+  async getConversationMessageCount(conversationId) {
+    try {
+      const result = await this.pool.query(
+        `SELECT COUNT(*) as count FROM messages WHERE conversation_id = $1`,
+        [conversationId]
+      );
+      return parseInt(result.rows[0].count);
+    } catch (error) {
+      console.error('Error getting conversation message count:', error);
+      throw error;
+    }
+  }
+
+  async getUserChatCount(userId, chatType) {
+    try {
+      const result = await this.pool.query(
+        `SELECT COUNT(*) as count FROM conversations 
+         WHERE user_id = $1 AND chat_type = $2`,
+        [userId, chatType]
+      );
+      return parseInt(result.rows[0].count);
+    } catch (error) {
+      console.error('Error getting user chat count:', error);
+      throw error;
+    }
+  }
+
+  async checkChatLimits(userId, chatType, conversationId = null) {
+    try {
+      // Check conversation count limit (max 5 per chat type)
+      const chatCount = await this.getUserChatCount(userId, chatType);
+      if (chatCount >= 5) {
+        return {
+          exceedsLimit: true,
+          limitType: 'chat_count',
+          message: 'This is just a demonstration of the Teaching Cycle AI Assistant. If you would like to use this in your own school with your own framework, please contact simon.hamblin@gmail.com'
+        };
+      }
+
+      // Check message count limit for specific conversation (max 10 messages)
+      if (conversationId) {
+        const messageCount = await this.getConversationMessageCount(conversationId);
+        if (messageCount >= 10) {
+          return {
+            exceedsLimit: true,
+            limitType: 'message_count',
+            message: 'This is just a demonstration of the Teaching Cycle AI Assistant. If you would like to use this in your own school with your own framework, please contact simon.hamblin@gmail.com'
+          };
+        }
+      }
+
+      return { exceedsLimit: false };
+    } catch (error) {
+      console.error('Error checking chat limits:', error);
       throw error;
     }
   }

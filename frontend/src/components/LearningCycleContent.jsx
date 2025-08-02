@@ -246,6 +246,40 @@ Lesson Planner
           onClose={() => setActiveChatbot(null)}
         />
       )}
+
+      {/* Footer Bio */}
+      <Box sx={{
+        mt: 8,
+        py: 4,
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        textAlign: 'center'
+      }}>
+        <Container maxWidth="md">
+          <Typography variant="body1" sx={{ 
+            color: 'text.primary',
+            lineHeight: 1.6,
+            fontSize: '1rem'
+          }}>
+            Hi, I'm Simon, a History teacher and a full stack web developer with over 15 years experience in education. 
+            If you would like to get in touch, please email{' '}
+            <Typography 
+              component="a" 
+              href="mailto:simon.hamblin@gmail.com"
+              sx={{ 
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline'
+                }
+              }}
+            >
+              simon.hamblin@gmail.com
+            </Typography>
+          </Typography>
+        </Container>
+      </Box>
     </Box>
   );
 };

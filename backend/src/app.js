@@ -49,6 +49,23 @@ app.post('/api/lesson-planner', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    // Check chat limits if user info provided
+    if (userId && conversationId) {
+      try {
+        const limitCheck = await db.checkChatLimits(userId, 'lesson', conversationId);
+        if (limitCheck.exceedsLimit) {
+          return res.json({ 
+            response: limitCheck.message,
+            limitExceeded: true,
+            limitType: limitCheck.limitType
+          });
+        }
+      } catch (limitError) {
+        console.error('Error checking limits:', limitError);
+        // Continue without limit check if it fails
+      }
+    }
+
     const result = await anthropicService.generateLessonPlan(message, conversationHistory);
     
     if (result.success) {
@@ -82,6 +99,23 @@ app.post('/api/framework-learning', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    // Check chat limits if user info provided
+    if (userId && conversationId) {
+      try {
+        const limitCheck = await db.checkChatLimits(userId, 'framework', conversationId);
+        if (limitCheck.exceedsLimit) {
+          return res.json({ 
+            response: limitCheck.message,
+            limitExceeded: true,
+            limitType: limitCheck.limitType
+          });
+        }
+      } catch (limitError) {
+        console.error('Error checking limits:', limitError);
+        // Continue without limit check if it fails
+      }
+    }
+
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
     
     if (result.success) {
@@ -113,6 +147,21 @@ app.post('/api/conversations', async (req, res) => {
     
     if (!userId || !userEmail || !chatType) {
       return res.status(400).json({ error: 'userId, userEmail, and chatType are required' });
+    }
+
+    // Check if user has reached conversation limit for this chat type
+    try {
+      const limitCheck = await db.checkChatLimits(userId, chatType);
+      if (limitCheck.exceedsLimit) {
+        return res.status(403).json({ 
+          error: 'Chat limit exceeded',
+          message: limitCheck.message,
+          limitType: limitCheck.limitType
+        });
+      }
+    } catch (limitError) {
+      console.error('Error checking limits:', limitError);
+      // Continue without limit check if it fails
     }
 
     const conversationId = await db.saveConversation(userId, userEmail, userName, chatType, title);

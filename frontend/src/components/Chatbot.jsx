@@ -36,6 +36,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isLimitReached, setIsLimitReached] = useState(false);
   const messagesEndRef = useRef(null);
 
   const copyToClipboard = async (content) => {
@@ -88,11 +89,18 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         setCurrentConversationId(data.conversationId);
         loadUserConversations(); // Refresh the list
         return data.conversationId;
+      } else if (response.status === 403) {
+        // Chat limit exceeded
+        const limitMessage = { role: 'assistant', content: data.message };
+        setMessages(prev => [...prev, limitMessage]);
+        setIsLimitReached(true);
+        return null;
       }
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -112,6 +120,10 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         setMessages(formattedMessages);
         setCurrentConversationId(conversationId);
         setInteractiveStates({}); // Reset interactive states
+        
+        // Check if this conversation has reached message limit
+        const messageCount = data.messages.length;
+        setIsLimitReached(messageCount >= 10);
       }
     } catch (error) {
       console.error('Error loading conversation:', error);
@@ -147,6 +159,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
     setCurrentConversationId(null);
     setInteractiveStates({});
     setInputMessage('');
+    setIsLimitReached(false);
   };
 
   // Auto-scroll to bottom when new messages are added
@@ -363,6 +376,12 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       if (response.ok) {
         const assistantMessage = { role: 'assistant', content: data.response };
         setMessages(prev => [...prev, assistantMessage]);
+        
+        // If limit exceeded, disable further input
+        if (data.limitExceeded) {
+          setInputMessage('');
+          setIsLimitReached(true);
+        }
       } else {
         const errorMessage = { role: 'assistant', content: `Error: ${data.error}` };
         setMessages(prev => [...prev, errorMessage]);
@@ -685,14 +704,14 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
             ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
             : 'Describe the lesson you want to create...'
           }
-          disabled={isLoading}
+          disabled={isLoading || isLimitReached}
           variant="outlined"
           size="small"
         />
         <Button
           variant="contained"
           onClick={sendMessage}
-          disabled={isLoading || !inputMessage.trim()}
+          disabled={isLoading || !inputMessage.trim() || isLimitReached}
           sx={{ alignSelf: 'flex-end', minWidth: 'auto', px: 3 }}
         >
           Send
