@@ -55,21 +55,9 @@ Keep your response structured, practical, and focused on actionable advice for e
 
   // Analyze if the lesson request has sufficient detail
   isLessonRequestComplete(userInput) {
-    const input = userInput.toLowerCase();
-    
-    // Required elements for a complete lesson plan
-    const hasSubject = /\b(math|science|english|history|geography|art|music|pe|biology|chemistry|physics|literature|language|social studies|computer|technology)\b/.test(input);
-    const hasTopic = input.length > 20; // Basic topic description
-    const hasGradeLevel = /\b(year\s*\d+|grade\s*\d+|k-\d+|\d+th\s*grade|primary|secondary|elementary|middle|high|kindergarten)\b/.test(input);
-    const hasClassSize = /\b(\d+\s*students?|class\s*of\s*\d+|small\s*group|large\s*class|\d+\s*kids?)\b/.test(input);
-    const hasDuration = /\b(\d+\s*minutes?|\d+\s*hours?|\d+\s*days?|\d+\s*weeks?|single\s*lesson|unit|series)\b/.test(input);
-    const hasContext = /\b(prior\s*knowledge|previous|experience|background|assessment|ability|level)\b/.test(input);
-
-    // Count how many elements are present
-    const completeness = [hasSubject, hasTopic, hasGradeLevel, hasClassSize, hasDuration, hasContext].filter(Boolean).length;
-    
-    // Require at least 3 out of 6 elements for a complete request
-    return completeness >= 3;
+    // Make smart questioning mandatory - always return false for initial requests
+    // This ensures users always go through the clarifying questions process
+    return false;
   }
 
   async generateClarifyingQuestions(userInput, conversationHistory = []) {
@@ -135,11 +123,11 @@ I can help you in three different ways based on how much support you'd like:
 
 **WORKFLOW OPTIONS:**
 
-```interactive-options
+\`\`\`interactive-options
 - 🤖 **"I Do"** - I'll create the complete lesson plan for you
 - 🤝 **"We Do"** - We'll collaborate through guided questions  
 - 👤 **"You Do"** - You provide your lesson draft, I'll give feedback
-```
+\`\`\`
 
 **Choose your preferred workflow:**
 
@@ -190,6 +178,7 @@ Please create a detailed, ready-to-implement lesson plan following this structur
 - Grade Level:
 - Duration:
 - Learning Objectives:
+- Success Criteria:
 
 **STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
 - Activate prior knowledge and build context
@@ -219,11 +208,6 @@ Please create a detailed, ready-to-implement lesson plan following this structur
 - Materials list
 - Technology requirements
 - Preparation notes
-
-**DIFFERENTIATION**
-- Support for struggling learners
-- Extensions for advanced students
-- Accommodations for diverse needs
 
 Make it practical, detailed, and immediately usable.`
       });
@@ -354,21 +338,21 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
 
   async generateLessonPlan(userInput, conversationHistory = []) {
     try {
-      // Check if this is the very first message - offer workflow selection
-      if (conversationHistory.length === 0) {
+      // Check if this is the very first user message - offer workflow selection
+      const userMessages = conversationHistory.filter(msg => msg.role === 'user');
+      if (userMessages.length === 0) {
         return this.generateWorkflowSelection(userInput, conversationHistory);
       }
 
       // Check if user just selected a workflow
-      const lastUserMessage = conversationHistory[conversationHistory.length - 1];
-      const isWorkflowSelection = lastUserMessage && (
-        lastUserMessage.content.toLowerCase().includes('i do') ||
-        lastUserMessage.content.toLowerCase().includes('we do') ||
-        lastUserMessage.content.toLowerCase().includes('you do')
+      const isWorkflowSelection = userInput && (
+        userInput.toLowerCase().includes('i do') ||
+        userInput.toLowerCase().includes('we do') ||
+        userInput.toLowerCase().includes('you do')
       );
 
       if (isWorkflowSelection) {
-        const selectedWorkflow = lastUserMessage.content.toLowerCase();
+        const selectedWorkflow = userInput.toLowerCase();
         
         if (selectedWorkflow.includes('you do')) {
           return this.generateYouDoResponse(userInput, conversationHistory);
@@ -380,7 +364,7 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
       }
 
       // Check if this is the first message and if it lacks detail
-      if (conversationHistory.length === 0 && !this.isLessonRequestComplete(userInput)) {
+      if (userMessages.length === 0 && !this.isLessonRequestComplete(userInput)) {
         return this.generateClarifyingQuestions(userInput, conversationHistory);
       }
 
@@ -415,7 +399,7 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
 
       const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the 4-stage Teaching and Learning Cycle (TLC).
 
-Based on all the information provided: "${fullContext}"`
+Based on all the information provided: "${fullContext}"
 
 Create a comprehensive lesson plan with the following structure:
 
@@ -424,6 +408,7 @@ Create a comprehensive lesson plan with the following structure:
 - Grade Level:
 - Duration:
 - Learning Objectives:
+- Success Criteria:
 
 **STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
 - Activate prior knowledge and build context
@@ -453,11 +438,6 @@ Create a comprehensive lesson plan with the following structure:
 - Materials list
 - Technology requirements
 - Preparation notes
-
-**DIFFERENTIATION**
-- Support for struggling learners
-- Extensions for advanced students
-- Accommodations for diverse needs
 
 Make it practical, detailed, and immediately usable by teachers.`;
 
