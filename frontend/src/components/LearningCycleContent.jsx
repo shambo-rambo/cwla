@@ -17,7 +17,7 @@ import {
   Grow,
   Slide
 } from '@mui/material';
-import { Brightness4, Brightness7, AdminPanelSettings } from '@mui/icons-material';
+import { Brightness4, Brightness7, AdminPanelSettings, Email, LinkedIn } from '@mui/icons-material';
 import Chatbot from './Chatbot';
 
 const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShowAdmin }) => {
@@ -88,10 +88,16 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ py: 2 }}>
+      <Container maxWidth="lg" sx={{ 
+        py: 1, 
+        height: 'calc(100vh - 200px)', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center'
+      }}>
 
         <Fade in timeout={1000}>
-          <Box sx={{ textAlign: 'center', mt: 8 }}>
+          <Box sx={{ textAlign: 'center' }}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="h2" component="h2" sx={{ 
                 mb: 1, 
@@ -100,14 +106,16 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                lineHeight: 1.2
+                lineHeight: 1.2,
+                fontSize: { xs: '2.5rem', md: '3.5rem' }
               }}>
                 The Teaching & Learning Cycle
               </Typography>
               <Typography variant="h4" component="p" sx={{ 
-                mb: 6, 
+                mb: 4, 
                 color: 'text.secondary',
-                fontWeight: 400
+                fontWeight: 400,
+                fontSize: { xs: '1.5rem', md: '2rem' }
               }}>
                 AI Assistant
               </Typography>
@@ -116,7 +124,7 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
             <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: '100%', mx: 'auto' }}>
               <Grid size={6}>
                 <Card sx={{
-                  height: '200px',
+                  height: '160px',
                   background: theme.palette.mode === 'dark' 
                     ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' 
                     : 'linear-gradient(135deg, #1e1e1e 0%, #3a3a3a 100%)',
@@ -170,7 +178,7 @@ Framework Analysis
               
               <Grid size={6}>
                 <Card sx={{
-                  height: '200px',
+                  height: '160px',
                   background: theme.palette.mode === 'dark' 
                     ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' 
                     : 'linear-gradient(135deg, #1e1e1e 0%, #3a3a3a 100%)',
@@ -249,35 +257,131 @@ Lesson Planner
 
       {/* Footer Bio */}
       <Box sx={{
-        mt: 8,
-        py: 4,
-        borderTop: '1px solid',
-        borderColor: 'divider',
-        textAlign: 'center'
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        py: 3,
+        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
+        backdropFilter: 'blur(15px)',
+        borderTop: '1px solid rgba(73, 162, 212, 0.2)',
+        zIndex: 1000,
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100px',
+          height: '2px',
+          background: 'linear-gradient(90deg, transparent, #49a2d4, transparent)',
+        }
       }}>
         <Container maxWidth="md">
-          <Typography variant="body1" sx={{ 
-            color: 'text.primary',
-            lineHeight: 1.6,
-            fontSize: '1rem'
+          <Box sx={{ 
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 2
           }}>
-            Hi, I'm Simon, a History teacher and a full stack web developer with over 15 years experience in education. 
-            If you would like to get in touch, please email{' '}
-            <Typography 
-              component="a" 
-              href="mailto:simon.hamblin@gmail.com"
-              sx={{ 
-                color: 'primary.main',
-                textDecoration: 'none',
-                fontWeight: 600,
-                '&:hover': {
-                  textDecoration: 'underline'
-                }
-              }}
-            >
-              simon.hamblin@gmail.com
+            <Typography variant="h6" sx={{ 
+              color: '#49a2d4',
+              fontWeight: 600,
+              fontSize: '1.1rem',
+              mb: 1
+            }}>
+              About the Developer
             </Typography>
-          </Typography>
+            <Typography variant="body1" sx={{ 
+              color: 'rgba(255, 255, 255, 0.9)',
+              lineHeight: 1.6,
+              fontSize: '0.95rem',
+              maxWidth: '600px'
+            }}>
+              Hi, I'm Simon, a History teacher and full stack web developer with over 15 years experience in education. 
+              I created this AI assistant to help teachers design better lessons using proven pedagogical frameworks.
+            </Typography>
+            <Box sx={{
+              mt: 3,
+              display: 'flex',
+              gap: 2,
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Button
+                component="a"
+                href="mailto:simon.hamblin@gmail.com"
+                variant="outlined"
+                startIcon={<Email sx={{ fontSize: '1.2rem' }} />}
+                sx={{
+                  px: 3,
+                  py: 1.5,
+                  borderColor: 'rgba(73, 162, 212, 0.5)',
+                  color: '#6bb6e0',
+                  background: 'rgba(73, 162, 212, 0.1)',
+                  backdropFilter: 'blur(5px)',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  minWidth: '140px',
+                  '&:hover': {
+                    borderColor: '#49a2d4',
+                    background: 'rgba(73, 162, 212, 0.2)',
+                    color: '#49a2d4',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 20px rgba(73, 162, 212, 0.4)',
+                    '& .MuiSvgIcon-root': {
+                      transform: 'scale(1.1)'
+                    }
+                  },
+                  transition: 'all 0.3s ease',
+                  '& .MuiSvgIcon-root': {
+                    transition: 'transform 0.3s ease'
+                  }
+                }}
+              >
+                EMAIL
+              </Button>
+              <Button
+                component="a"
+                href="https://www.linkedin.com/in/simon-hamblin-2b931398/"
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outlined"
+                startIcon={<LinkedIn sx={{ fontSize: '1.2rem' }} />}
+                sx={{
+                  px: 3,
+                  py: 1.5,
+                  borderColor: 'rgba(73, 162, 212, 0.5)',
+                  color: '#6bb6e0',
+                  background: 'rgba(73, 162, 212, 0.1)',
+                  backdropFilter: 'blur(5px)',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  minWidth: '140px',
+                  '&:hover': {
+                    borderColor: '#49a2d4',
+                    background: 'rgba(73, 162, 212, 0.2)',
+                    color: '#49a2d4',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 20px rgba(73, 162, 212, 0.4)',
+                    '& .MuiSvgIcon-root': {
+                      transform: 'scale(1.1)'
+                    }
+                  },
+                  transition: 'all 0.3s ease',
+                  '& .MuiSvgIcon-root': {
+                    transition: 'transform 0.3s ease'
+                  }
+                }}
+              >
+                LINKEDIN
+              </Button>
+            </Box>
+          </Box>
         </Container>
       </Box>
     </Box>

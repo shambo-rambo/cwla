@@ -159,7 +159,7 @@ const AdminDashboard = ({ user, onBack }) => {
       <Box sx={{ p: 4 }}>
         {/* Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={2.4}>
+          <Grid size={{ xs: 12, md: 2.4 }}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="primary.main">
@@ -171,7 +171,7 @@ const AdminDashboard = ({ user, onBack }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={2.4}>
+          <Grid size={{ xs: 12, md: 2.4 }}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="secondary.main">
@@ -183,7 +183,7 @@ const AdminDashboard = ({ user, onBack }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={2.4}>
+          <Grid size={{ xs: 12, md: 2.4 }}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="success.main">
@@ -195,7 +195,7 @@ const AdminDashboard = ({ user, onBack }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={2.4}>
+          <Grid size={{ xs: 12, md: 2.4 }}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="info.main">
@@ -207,7 +207,7 @@ const AdminDashboard = ({ user, onBack }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={2.4}>
+          <Grid size={{ xs: 12, md: 2.4 }}>
             <Card>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="warning.main">
