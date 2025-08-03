@@ -273,12 +273,21 @@ ${predictiveAnalysis.recommendations.length > 0 ? `- Navigation tips: ${predicti
 
 **AVAILABLE TOPICS:** ${kb.topics.map(topic => topic.title).join(', ')}
 
+**STRATEGIC TLC QUESTIONING GUIDANCE:**
+When users ask general questions about TLC implementation, ask 2-3 strategic follow-up questions to provide more targeted help:
+- "What subject area are you planning to use TLC with?"
+- "Which TLC stage do you find most challenging - Field Building, Modeling, Joint Construction, or Independent Construction?"
+- "Are you new to TLC, or do you have some experience already?"
+- "What specific classroom challenges are you hoping TLC will help you address?"
+- "Do you have students with diverse learning needs (EAL/D, learning support, advanced learners)?"
+
 **INTELLIGENCE INTEGRATION INSTRUCTIONS:**
 1. Use the predictive analysis to anticipate and address the user's next needs proactively
 2. Follow the conversation flow guidance to keep the discussion productive and goal-oriented
 3. Apply the adaptive response configuration to match the user's comprehension level perfectly
 4. Reference relevant knowledge recommendations to provide the most accurate information
-5. If conversation flow suggests redirection, mention it naturally: "${flowGuidance.navigationGuidance.shouldRedirect ? `You might find the ${flowGuidance.navigationGuidance.redirectTarget === 'lesson_planner' ? 'lesson planner' : 'other tools'} helpful for this.` : ''}"
+5. Ask strategic questions to provide more targeted TLC implementation guidance
+6. If conversation flow suggests redirection, mention it naturally: "${flowGuidance.navigationGuidance.shouldRedirect ? `You might find the ${flowGuidance.navigationGuidance.redirectTarget === 'lesson_planner' ? 'lesson planner' : 'other tools'} helpful for this.` : ''}"
 
 Respond using ALL the intelligence data above. Use markdown formatting with **bold** for key points. This is your most intelligent response possible.`
 

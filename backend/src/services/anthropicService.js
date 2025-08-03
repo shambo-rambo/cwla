@@ -131,12 +131,13 @@ I want to create a comprehensive lesson plan, but I need more details to make it
 
 <p>Please ask 3-4 targeted questions to gather the missing information I need to create the best possible lesson plan. Focus on:</p>
 
-<h3>Key Areas to Explore:</h3>
+<h3>Key Areas to Explore for Effective TLC Implementation:</h3>
 <ol>
-<li><strong>Class Context:</strong> How many students? What's their prior knowledge/experience with this topic?</li>
-<li><strong>Lesson Scope:</strong> How many lessons in the series? Single lesson or multi-day unit?</li>
-<li><strong>Practical Details:</strong> Lesson duration? Any specific learning objectives or assessment requirements?</li>
-<li><strong>Student Needs:</strong> Any students with special learning needs? Mixed ability levels?</li>
+<li><strong>Subject & Context:</strong> What subject area? What grade level? What specific topic or concept?</li>
+<li><strong>TLC Experience:</strong> Have you used the Teaching & Learning Cycle before? Which TLC stage do you find most challenging?</li>
+<li><strong>Student Demographics:</strong> How many students? Any EAL/D students or students with learning support needs? Mixed ability levels?</li>
+<li><strong>Learning Goals:</strong> What should students know/do by the end? Any specific curriculum outcomes or assessment requirements?</li>
+<li><strong>Practical Details:</strong> Lesson duration? Available resources? Any constraints or challenges I should know about?</li>
 </ol>
 
 <p>Format your response as friendly, specific questions that show you understand their request but need these key details to create something truly tailored to their classroom.</p>
