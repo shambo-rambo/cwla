@@ -174,6 +174,12 @@ Create engaging, evidence-based lessons that develop critical thinking and histo
             
             **IMPORTANT:** Integrate and enhance the provided methodology-based activities rather than replacing them. Each activity should specify which IB teaching principle(s) it addresses and include the research-based pedagogical foundation.
             
+            **CRITICAL: DO NOT SUGGEST WORKFLOW OPTIONS**
+            - Do not mention "I Do, We Do, You Do" or similar workflow terminology
+            - Do not provide workflow choice options to the user
+            - Do not suggest teaching method alternatives or workflow variations
+            - Focus only on the specific lesson content requested
+            
             **IB FRAMEWORK INTEGRATION:**
             Use these IB principles to enhance activities:
             ${this.ibFramework ? `
@@ -871,6 +877,12 @@ Contextualization process includes:
 - Ensure abstract, transferable, and enduring concepts
 - Structure meaningful collaboration and assessment opportunities
 ` : 'Apply evidence-based AI enhancement strategies'}
+
+**CRITICAL: DO NOT SUGGEST WORKFLOW OPTIONS**
+- Do not mention "I Do, We Do, You Do" or similar workflow terminology
+- Do not provide workflow choice options to the user
+- Do not suggest teaching method alternatives or workflow variations
+- Generate ONLY the requested lesson content
 
 Generate a complete, professional lesson plan following the IB History DP template structure.`,
         messages: [

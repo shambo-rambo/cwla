@@ -270,12 +270,6 @@ ${predictiveAnalysis.recommendations.length > 0 ? `- Navigation tips: ${predicti
 - ${adaptationGuidelines.interactionStyle.includes('encouraging') ? 'Be patient and encouraging' : 'Be direct and solution-focused'}
 - Flow health: ${flowGuidance.conversationHealth.status} - ${flowGuidance.conversationHealth.recommendations.join(' ')}
 
-**INTELLIGENT INTERACTIVE OPTIONS:**
-For most responses, especially greetings, general questions, or when offering guidance, ALWAYS include contextual interactive options using this EXACT format:
-
-\`\`\`interactive-options
-${this.generateContextualOptions(responseStrategy.contextAnalysis, intelligentRecommendations)}
-\`\`\`
 
 **AVAILABLE TOPICS:** ${kb.topics.map(topic => topic.title).join(', ')}
 
