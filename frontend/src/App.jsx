@@ -97,7 +97,7 @@ function App() {
               mb: 2
             }}
           >
-            Transform your teaching with AI-powered lesson planning and framework analysis
+            Use AI to learn and plan lessons using the Teaching and Learning Cycle.
           </Typography>
           <Button
             onClick={handleGoogleLogin}
