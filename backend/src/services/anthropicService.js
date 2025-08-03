@@ -64,21 +64,19 @@ class AnthropicService {
     try {
       const prompt = `You are an expert educational consultant specializing in teaching frameworks and pedagogical approaches. 
 
-User Query: "${userInput}"
+<p><strong>User Query:</strong> "${userInput}"</p>
 
-Please provide a comprehensive analysis that includes:
+<p>Please provide a comprehensive analysis that includes:</p>
 
-1. **Framework Identification**: What teaching/learning frameworks are most relevant to this query?
+<ol>
+<li><strong>Framework Identification:</strong> What teaching/learning frameworks are most relevant to this query?</li>
+<li><strong>Pedagogical Approach:</strong> Recommend specific teaching strategies and methodologies</li>
+<li><strong>Learning Cycle Integration:</strong> How does this align with the 5-stage learning cycle (Engage, Explore, Explain, Elaborate, Evaluate)?</li>
+<li><strong>Practical Implementation:</strong> Concrete steps teachers can take</li>
+<li><strong>Assessment Strategies:</strong> How to measure effectiveness</li>
+</ol>
 
-2. **Pedagogical Approach**: Recommend specific teaching strategies and methodologies
-
-3. **Learning Cycle Integration**: How does this align with the 5-stage learning cycle (Engage, Explore, Explain, Elaborate, Evaluate)?
-
-4. **Practical Implementation**: Concrete steps teachers can take
-
-5. **Assessment Strategies**: How to measure effectiveness
-
-Keep your response structured, practical, and focused on actionable advice for educators.`;
+<p>Keep your response structured, practical, and focused on actionable advice for educators.</p>`;
 
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
@@ -123,18 +121,21 @@ Keep your response structured, practical, and focused on actionable advice for e
         role: 'user',
         content: `I want to create a comprehensive lesson plan, but I need more details to make it perfect for your specific context.
 
-User's request: "${userInput}"
+<p><strong>User's request:</strong> "${userInput}"</p>
 
-Please ask 3-4 targeted questions to gather the missing information I need to create the best possible lesson plan. Focus on:
+<p>Please ask 3-4 targeted questions to gather the missing information I need to create the best possible lesson plan. Focus on:</p>
 
-1. **Class Context**: How many students? What's their prior knowledge/experience with this topic?
-2. **Lesson Scope**: How many lessons in the series? Single lesson or multi-day unit?
-3. **Practical Details**: Lesson duration? Any specific learning objectives or assessment requirements?
-4. **Student Needs**: Any students with special learning needs? Mixed ability levels?
+<h3>Key Areas to Explore:</h3>
+<ol>
+<li><strong>Class Context:</strong> How many students? What's their prior knowledge/experience with this topic?</li>
+<li><strong>Lesson Scope:</strong> How many lessons in the series? Single lesson or multi-day unit?</li>
+<li><strong>Practical Details:</strong> Lesson duration? Any specific learning objectives or assessment requirements?</li>
+<li><strong>Student Needs:</strong> Any students with special learning needs? Mixed ability levels?</li>
+</ol>
 
-Format your response as friendly, specific questions that show you understand their request but need these key details to create something truly tailored to their classroom.
+<p>Format your response as friendly, specific questions that show you understand their request but need these key details to create something truly tailored to their classroom.</p>
 
-Keep it conversational and encouraging - like a helpful colleague asking follow-up questions.`
+<p>Keep it conversational and encouraging - like a helpful colleague asking follow-up questions.</p>`
       });
 
       const response = await anthropic.messages.create({
@@ -166,29 +167,29 @@ Keep it conversational and encouraging - like a helpful colleague asking follow-
             role: 'user',
             content: `You are a lesson planning assistant. A teacher wants help with: "${userInput}"
 
-CRITICAL INSTRUCTION: ABSOLUTELY NO EMOJIS ALLOWED. No robot emoji, no handshake emoji, no person emoji, no decorative characters of any kind. Text only.
+CRITICAL INSTRUCTION: Format your response as clean HTML. Use the EXACT structure below. Do not use markdown formatting (no ** or * characters).
 
-Present them with three workflow options using the gradual release of responsibility model. Copy this exact text without any modifications or additions:
+<h2>Welcome to the Lesson Planner!</h2>
 
-**Welcome to the Lesson Planner!**
+<p>I can help you in three different ways based on how much support you'd like:</p>
 
-I can help you in three different ways based on how much support you'd like:
-
-**WORKFLOW OPTIONS:**
+<h3>WORKFLOW OPTIONS:</h3>
 
 \`\`\`interactive-options
-- **"I Do"** - I'll create the complete lesson plan for you
-- **"We Do"** - We'll collaborate through guided questions  
-- **"You Do"** - You provide your lesson draft, I'll give feedback
+- <strong>I Do</strong> - I'll create the complete lesson plan for you
+- <strong>We Do</strong> - We'll collaborate through guided questions  
+- <strong>You Do</strong> - You provide your lesson draft, I'll give feedback
 \`\`\`
 
-**Choose your preferred workflow:**
+<h3>Choose your preferred workflow:</h3>
 
-- **"I Do"**: Perfect when you're short on time or want a complete lesson plan created from scratch
-- **"We Do"**: Great for collaborative planning where you want input on specific decisions
-- **"You Do"**: Ideal when you have a lesson draft and want expert feedback and improvements
+<ul>
+<li><strong>I Do:</strong> Perfect when you're short on time or want a complete lesson plan created from scratch</li>
+<li><strong>We Do:</strong> Great for collaborative planning where you want input on specific decisions</li>
+<li><strong>You Do:</strong> Ideal when you have a lesson draft and want expert feedback and improvements</li>
+</ul>
 
-Which workflow would work best for your needs today?`
+<p>Which workflow would work best for your needs today?</p>`
           }
         ]
       });
@@ -208,6 +209,8 @@ Which workflow would work best for your needs today?`
 
   async generateIDoResponse(userInput, conversationHistory = []) {
     try {
+      console.log('🚀 generateIDoResponse called with:', userInput);
+      console.log('📝 Conversation history length:', conversationHistory.length);
       // Get the original lesson request from the first message
       const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
       
@@ -223,85 +226,36 @@ Which workflow would work best for your needs today?`
       
       messages.push({
         role: 'user',
-        content: `Perfect! You have chosen the "I Do" workflow. I will create a complete lesson plan for you using evidence-based Teaching and Learning Cycle practices.
+        content: `Perfect! You've chosen "I Do" - I'll create a complete lesson plan for you.
 
-Original request: "${originalRequest}"
+<p><strong>Original request:</strong> "${originalRequest}"</p>
 
-Since you want me to handle all the planning, I will create a comprehensive lesson plan using the Teaching and Learning Cycle with research-based best practices integrated throughout.
+<p>I'll handle all the planning, but first I need to gather a few key details to make sure the lesson plan is perfectly tailored to your specific classroom and needs.</p>
 
-${tlcKnowledge.available ? `
-EVIDENCE-BASED TLC PRINCIPLES TO INTEGRATE:
-${tlcKnowledge.implementationGuidelines?.map(guideline => `• ${guideline}`).join('\n') || ''}
+<h3>Quick Questions to Perfect Your Lesson:</h3>
 
-DIFFERENTIATION STRATEGIES TO INCLUDE:
-• EAL/D Support: ${tlcKnowledge.differentiationStrategies?.ealdSupport?.slice(0,2).join(', ') || 'Visual supports, multilingual resources'}
-• Learning Support: ${tlcKnowledge.differentiationStrategies?.learningDifficulties?.slice(0,2).join(', ') || 'Visual aids, chunked information'}
-• Advanced Learners: ${tlcKnowledge.differentiationStrategies?.advancedLearners?.slice(0,2).join(', ') || 'Tiered assignments, independent study'}
+<h4>Class Context:</h4>
+<ol>
+<li>How many students are in your class?</li>
+<li>What grade/year level are you teaching?</li>
+<li>How long is your lesson period?</li>
+</ol>
 
-TROUBLESHOOTING PREVENTION:
-${contextualKnowledge.relevantTroubleshooting ? Object.entries(contextualKnowledge.relevantTroubleshooting).map(([key, tips]) => `• ${key}: ${tips[0] || ''}`).join('\n') : '• Use interactive strategies to maintain engagement\n• Include talking protocols for structured collaboration'}
-` : ''}
+<h4>Learning Focus:</h4>
+<ol start="4">
+<li>What's the main learning objective you want to achieve?</li>
+<li>Are there any specific curriculum requirements to address?</li>
+<li>Do you have any students with special learning needs (EAL/D, learning support, advanced learners)?</li>
+</ol>
 
-IMPORTANT: Please format your response as clean, professional HTML that can be easily copied and pasted. Use proper HTML structure with headings, lists, and clear formatting. Do not include any emojis or decorative characters.
+<h4>Resources & Timing:</h4>
+<ol start="7">
+<li>What resources/technology do you have available?</li>
+<li>Is this a standalone lesson or part of a unit?</li>
+<li>Any specific assessment requirements?</li>
+</ol>
 
-Create a detailed, ready-to-implement lesson plan following this HTML structure:
-
-<h2>LESSON OVERVIEW</h2>
-<ul>
-<li>Subject/Topic:</li>
-<li>Grade Level:</li>
-<li>Duration:</li>
-<li>Learning Objectives:</li>
-<li>Success Criteria:</li>
-</ul>
-
-<h2>STAGE 1: BUILDING THE FIELD (15-20% of lesson time)</h2>
-<ul>
-<li>Activate prior knowledge and build context</li>
-<li>Introduce key vocabulary and concepts</li>
-<li>Explore the topic through discussion and shared activities</li>
-<li>Set the purpose for learning</li>
-</ul>
-
-<h2>STAGE 2: MODELING AND DECONSTRUCTION (25-30% of lesson time)</h2>
-<ul>
-<li>Teacher demonstrates or models the skill/concept</li>
-<li>Break down examples step-by-step</li>
-<li>Identify key features and patterns</li>
-<li>Joint analysis of mentor texts or examples</li>
-</ul>
-
-<h2>STAGE 3: JOINT CONSTRUCTION (30-35% of lesson time)</h2>
-<ul>
-<li>Teacher and students work together</li>
-<li>Guided practice with scaffolding</li>
-<li>Collaborative problem-solving or writing</li>
-<li>Strategic questioning and feedback</li>
-</ul>
-
-<h2>STAGE 4: INDEPENDENT CONSTRUCTION (20-25% of lesson time)</h2>
-<ul>
-<li>Students work independently</li>
-<li>Apply learning to new contexts</li>
-<li>Individual assessment tasks</li>
-<li>Self-reflection and peer feedback</li>
-</ul>
-
-<h2>RESOURCES NEEDED</h2>
-<ul>
-<li>Materials list</li>
-<li>Technology requirements</li>
-<li>Preparation notes</li>
-</ul>
-
-<h2>DIFFERENTIATION STRATEGIES</h2>
-<ul>
-<li>EAL/D Support strategies</li>
-<li>Learning Support accommodations</li>
-<li>Advanced Learner extensions</li>
-</ul>
-
-Make it practical, detailed, immediately usable, and ensure all output is in clean HTML format without any emojis.`
+<p>Please answer 3-4 of these questions that are most relevant to your situation. Once I have these details, I'll create a comprehensive, ready-to-use lesson plan with all the Teaching and Learning Cycle stages perfectly structured for your classroom!</p>`
       });
 
       const response = await anthropic.messages.create({
@@ -325,6 +279,8 @@ Make it practical, detailed, immediately usable, and ensure all output is in cle
 
   async generateWeDoResponse(userInput, conversationHistory = []) {
     try {
+      console.log('🚀 generateWeDoResponse called with:', userInput);
+      console.log('📝 Conversation history length:', conversationHistory.length);
       const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
       
       const messages = conversationHistory.map(msg => ({
@@ -336,28 +292,34 @@ Make it practical, detailed, immediately usable, and ensure all output is in cle
         role: 'user',
         content: `Perfect! You've chosen "We Do" - let's collaborate to create your lesson plan.
 
-Original request: "${originalRequest}"
+<p><strong>Original request:</strong> "${originalRequest}"</p>
 
-I'll guide you through creating a lesson plan by asking targeted questions about your specific context and preferences. This ensures the final plan is perfectly tailored to your classroom.
+<p>I'll guide you through creating a lesson plan by asking targeted questions about your specific context and preferences. This ensures the final plan is perfectly tailored to your classroom.</p>
 
-Let's start with some key questions:
+<p>Let's start with some key questions:</p>
 
-**Class Context:**
-1. How many students are in your class?
-2. What's their current knowledge level with this topic?
-3. Are there any students with special learning needs to consider?
+<h4>Class Context:</h4>
+<ol>
+<li>How many students are in your class?</li>
+<li>What's their current knowledge level with this topic?</li>
+<li>Are there any students with special learning needs to consider?</li>
+</ol>
 
-**Lesson Logistics:**
-4. How long is your lesson period?
-5. Is this a single lesson or part of a series?
-6. What resources/technology do you have available?
+<h4>Lesson Logistics:</h4>
+<ol start="4">
+<li>How long is your lesson period?</li>
+<li>Is this a single lesson or part of a series?</li>
+<li>What resources/technology do you have available?</li>
+</ol>
 
-**Learning Focus:**
-7. What specific skills or knowledge should students gain?
-8. How will you know if students have learned successfully?
-9. Are there any curriculum requirements to address?
+<h4>Learning Focus:</h4>
+<ol start="7">
+<li>What specific skills or knowledge should students gain?</li>
+<li>How will you know if students have learned successfully?</li>
+<li>Are there any curriculum requirements to address?</li>
+</ol>
 
-Please answer 2-3 of these questions that feel most important to you, and I'll ask follow-up questions to help us build the perfect lesson together!`
+<p>Please answer 2-3 of these questions that feel most important to you, and I'll ask follow-up questions to help us build the perfect lesson together!</p>`
       });
 
       const response = await anthropic.messages.create({
@@ -381,6 +343,10 @@ Please answer 2-3 of these questions that feel most important to you, and I'll a
 
   async generateYouDoResponse(userInput, conversationHistory = []) {
     try {
+      console.log('🚀 generateYouDoResponse called with:', userInput);
+      console.log('📝 Conversation history length:', conversationHistory.length);
+      const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
+      
       const messages = conversationHistory.map(msg => ({
         role: msg.role,
         content: msg.content
@@ -388,25 +354,33 @@ Please answer 2-3 of these questions that feel most important to you, and I'll a
       
       messages.push({
         role: 'user',
-        content: `Excellent choice! You've selected "You Do" - I'm ready to provide feedback on your lesson plan.
+        content: `Excellent choice! You've selected "You Do" - I'll provide expert feedback on your lesson plan.
 
-Please paste your lesson plan draft below, and I'll provide:
+<p><strong>Original request:</strong> "${originalRequest}"</p>
 
-• **Constructive feedback** on structure and pedagogy
-• **Alignment check** with the Teaching and Learning Cycle
-• **Enhancement suggestions** for student engagement
-• **Differentiation recommendations** for diverse learners
-• **Assessment improvement** ideas
-• **Resource and timing** optimization tips
+<p>Before you share your lesson draft, let me ask a few quick questions to give you the most targeted and helpful feedback:</p>
 
-**What to include in your lesson plan:**
-- Learning objectives
-- Activities and timing
-- Resources needed
-- Assessment strategies
-- Any specific concerns or areas you'd like me to focus on
+<h4>About Your Lesson Context:</h4>
+<ol>
+<li>What grade/year level are you teaching?</li>
+<li>How long is your lesson period?</li>
+<li>How many students are in your class?</li>
+</ol>
 
-Just paste your lesson plan when you're ready, and I'll give you detailed, actionable feedback to make it even better!`
+<h4>Feedback Focus:</h4>
+<ol start="4">
+<li>Are there specific areas you'd like me to focus on? (e.g., engagement, differentiation, timing, assessment)</li>
+<li>Do you have students with special learning needs I should consider?</li>
+<li>Are there particular Teaching and Learning Cycle stages you want to strengthen?</li>
+</ol>
+
+<h4>Your Lesson Status:</h4>
+<ol start="7">
+<li>Is this a complete draft or still in development?</li>
+<li>Are there any challenges you're facing with this lesson?</li>
+</ol>
+
+<p>Please answer 2-3 of these questions, then paste your lesson plan draft. This will help me provide much more specific and useful feedback tailored to your exact needs!</p>`
       });
 
       const response = await anthropic.messages.create({
@@ -436,51 +410,118 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
         return this.generateWorkflowSelection(userInput, conversationHistory);
       }
 
-      // Check if user just selected a workflow
-      const isWorkflowSelection = userInput && (
-        userInput.toLowerCase().includes('i do') ||
-        userInput.toLowerCase().includes('we do') ||
-        userInput.toLowerCase().includes('you do')
+      // Check if user just selected a workflow (handle both direct selections and formatted selections)
+      const inputLower = userInput ? userInput.toLowerCase() : '';
+      console.log('Checking workflow selection for input:', userInput);
+      console.log('Input lowercase:', inputLower);
+      
+      const isWorkflowSelection = inputLower && (
+        inputLower.includes('"i do"') ||
+        inputLower.includes('"we do"') ||
+        inputLower.includes('"you do"') ||
+        inputLower.includes('selected:') ||
+        inputLower.includes('i do') ||
+        inputLower.includes('we do') ||
+        inputLower.includes('you do') ||
+        // Check for the specific workflow phrases from the HTML options
+        inputLower.includes('complete lesson plan') ||
+        inputLower.includes('collaborate through guided') ||
+        inputLower.includes('provide your lesson draft') ||
+        inputLower.includes('lesson draft, i\'ll give feedback')
       );
 
+      console.log('Is workflow selection:', isWorkflowSelection);
+
       if (isWorkflowSelection) {
-        const selectedWorkflow = userInput.toLowerCase();
+        console.log('✅ Workflow selection detected:', userInput);
         
-        if (selectedWorkflow.includes('you do')) {
+        // Prioritize workflow detection based on specific phrases first
+        if (inputLower.includes('you do') || inputLower.includes('provide your lesson draft') || inputLower.includes('lesson draft, i\'ll give feedback')) {
+          console.log('🎯 Routing to You Do workflow');
           return this.generateYouDoResponse(userInput, conversationHistory);
-        } else if (selectedWorkflow.includes('we do')) {
+        } else if (inputLower.includes('we do') || inputLower.includes('collaborate through guided')) {
+          console.log('🎯 Routing to We Do workflow');
           return this.generateWeDoResponse(userInput, conversationHistory);
-        } else if (selectedWorkflow.includes('i do')) {
+        } else if (inputLower.includes('i do') || inputLower.includes('complete lesson plan')) {
+          console.log('🎯 Routing to I Do workflow');
           return this.generateIDoResponse(userInput, conversationHistory);
         }
       }
 
-      // Check if this is the first message and if it lacks detail
-      if (userMessages.length === 0 && !this.isLessonRequestComplete(userInput)) {
-        return this.generateClarifyingQuestions(userInput, conversationHistory);
+      // Check if we've already presented workflow options
+      const hasWorkflowOptions = conversationHistory.some(msg => 
+        msg.role === 'assistant' && 
+        (msg.content.includes('interactive-options') || 
+         msg.content.includes('WORKFLOW OPTIONS') ||
+         msg.content.includes('I Do') && msg.content.includes('We Do') && msg.content.includes('You Do'))
+      );
+
+      console.log('Has workflow options already shown:', hasWorkflowOptions);
+
+      // If we've shown workflow options but didn't detect a clear selection, ask them to choose again
+      if (hasWorkflowOptions && !isWorkflowSelection) {
+        console.log('⚠️ Workflow options shown but no clear selection detected - asking to choose again');
+        return {
+          success: true,
+          response: `I see you've responded, but I'm not sure which workflow you'd like to use. Please click on one of the workflow options above:
+
+\`\`\`interactive-options
+- <strong>"I Do"</strong> - I'll create the complete lesson plan for you
+- <strong>"We Do"</strong> - We'll collaborate through guided questions  
+- <strong>"You Do"</strong> - You provide your lesson draft, I'll give feedback
+\`\`\`
+
+Please select one of these options so I can help you in the best way possible!`
+        };
       }
 
-      // Check if we're in a clarifying questions conversation
-      const lastAssistantMessage = conversationHistory
-        .filter(msg => msg.role === 'assistant')
-        .pop();
-      
-      const isAnsweringQuestions = lastAssistantMessage && 
-        (lastAssistantMessage.content.includes('questions') || 
-         lastAssistantMessage.content.includes('need more details') ||
-         lastAssistantMessage.content.includes('tell me more'));
-
-      // If user is answering questions but still lacks complete info, ask more questions
-      if (isAnsweringQuestions && conversationHistory.length > 0 && conversationHistory.length < 6) {
-        const allUserInput = conversationHistory
-          .filter(msg => msg.role === 'user')
-          .map(msg => msg.content)
-          .join(' ');
-        
-        if (!this.isLessonRequestComplete(allUserInput)) {
+      // Don't ask clarifying questions if we've already shown workflow options
+      if (!hasWorkflowOptions) {
+        // Check if this is the first message and if it lacks detail
+        if (userMessages.length === 0 && !this.isLessonRequestComplete(userInput)) {
           return this.generateClarifyingQuestions(userInput, conversationHistory);
         }
+
+        // Check if we're in a clarifying questions conversation
+        const lastAssistantMessage = conversationHistory
+          .filter(msg => msg.role === 'assistant')
+          .pop();
+        
+        const isAnsweringQuestions = lastAssistantMessage && 
+          (lastAssistantMessage.content.includes('questions') || 
+           lastAssistantMessage.content.includes('need more details') ||
+           lastAssistantMessage.content.includes('tell me more'));
+
+        // If user is answering questions but still lacks complete info, ask more questions
+        if (isAnsweringQuestions && conversationHistory.length > 0 && conversationHistory.length < 6) {
+          const allUserInput = conversationHistory
+            .filter(msg => msg.role === 'user')
+            .map(msg => msg.content)
+            .join(' ');
+          
+          if (!this.isLessonRequestComplete(allUserInput)) {
+            return this.generateClarifyingQuestions(userInput, conversationHistory);
+          }
+        }
       }
+
+      // Additional safety check - if we've shown workflow options, don't generate a regular lesson
+      if (hasWorkflowOptions) {
+        console.log('🚫 Blocking regular lesson generation - workflow options already shown');
+        return {
+          success: true,
+          response: `I've already shown you the workflow options. Please select one of the workflows:
+
+\`\`\`interactive-options
+- <strong>"I Do"</strong> - I'll create the complete lesson plan for you
+- <strong>"We Do"</strong> - We'll collaborate through guided questions  
+- <strong>"You Do"</strong> - You provide your lesson draft, I'll give feedback
+\`\`\`
+
+Click on one of the options above to proceed with your lesson planning!`
+        };
+      }
+
       // Gather all user inputs for complete context
       const allUserRequests = conversationHistory
         .filter(msg => msg.role === 'user')
@@ -496,70 +537,92 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
 
       const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the Teaching and Learning Cycle (TLC). You have access to comprehensive TLC research and best practices.
 
-Based on all the information provided: "${fullContext}"
+<p><strong>Based on all the information provided:</strong> "${fullContext}"</p>
 
 ${tlcKnowledge.available ? `
-**TLC IMPLEMENTATION GUIDELINES** (Research-Based):
-${tlcKnowledge.implementationGuidelines?.map(guideline => `- ${guideline}`).join('\n') || ''}
+<h3>TLC IMPLEMENTATION GUIDELINES (Research-Based):</h3>
+<ul>
+${tlcKnowledge.implementationGuidelines?.map(guideline => `<li>${guideline}</li>`).join('\n') || ''}
+</ul>
 
-**DIFFERENTIATION STRATEGIES**:
-- EAL/D Support: ${tlcKnowledge.differentiationStrategies?.ealdSupport?.slice(0,2).join(', ') || 'Visual supports, multilingual resources'}
-- Learning Support: ${tlcKnowledge.differentiationStrategies?.learningDifficulties?.slice(0,2).join(', ') || 'Visual aids, chunked information'}
-- Advanced Learners: ${tlcKnowledge.differentiationStrategies?.advancedLearners?.slice(0,2).join(', ') || 'Tiered assignments, independent study'}
+<h3>DIFFERENTIATION STRATEGIES:</h3>
+<ul>
+<li><strong>EAL/D Support:</strong> ${tlcKnowledge.differentiationStrategies?.ealdSupport?.slice(0,2).join(', ') || 'Visual supports, multilingual resources'}</li>
+<li><strong>Learning Support:</strong> ${tlcKnowledge.differentiationStrategies?.learningDifficulties?.slice(0,2).join(', ') || 'Visual aids, chunked information'}</li>
+<li><strong>Advanced Learners:</strong> ${tlcKnowledge.differentiationStrategies?.advancedLearners?.slice(0,2).join(', ') || 'Tiered assignments, independent study'}</li>
+</ul>
 
-**TROUBLESHOOTING TIPS** (Evidence-Based):
-${contextualKnowledge.relevantTroubleshooting ? Object.entries(contextualKnowledge.relevantTroubleshooting).map(([key, tips]) => `- ${key}: ${tips.slice(0,2).join(', ')}`).join('\n') : '- Use interactive annotation and think-pair-share for engagement\n- Use talking protocols for joint construction\n- Provide graphic organizers for independent work'}
+<h3>TROUBLESHOOTING TIPS (Evidence-Based):</h3>
+<ul>
+${contextualKnowledge.relevantTroubleshooting ? Object.entries(contextualKnowledge.relevantTroubleshooting).map(([key, tips]) => `<li><strong>${key}:</strong> ${tips.slice(0,2).join(', ')}</li>`).join('\n') : '<li>Use interactive annotation and think-pair-share for engagement</li>\n<li>Use talking protocols for joint construction</li>\n<li>Provide graphic organizers for independent work</li>'}
+</ul>
 
-**QUALITY INDICATORS** (Look for these signs of success):
-${tlcKnowledge.qualityIndicators ? Object.entries(tlcKnowledge.qualityIndicators).map(([stage, indicators]) => `- ${stage.replace(/([A-Z])/g, ' $1').trim()}: ${indicators[0] || ''}`).join('\n') : ''}
+<h3>QUALITY INDICATORS (Look for these signs of success):</h3>
+<ul>
+${tlcKnowledge.qualityIndicators ? Object.entries(tlcKnowledge.qualityIndicators).map(([stage, indicators]) => `<li><strong>${stage.replace(/([A-Z])/g, ' $1').trim()}:</strong> ${indicators[0] || ''}</li>`).join('\n') : ''}
+</ul>
 ` : ''}
 
-Create a comprehensive lesson plan with the following structure:
+<p>Create a comprehensive lesson plan with the following structure:</p>
 
-**LESSON OVERVIEW**
-- Subject/Topic:
-- Grade Level:
-- Duration:
-- Learning Objectives:
-- Success Criteria:
+<h2>LESSON OVERVIEW</h2>
+<ul>
+<li>Subject/Topic:</li>
+<li>Grade Level:</li>
+<li>Duration:</li>
+<li>Learning Objectives:</li>
+<li>Success Criteria:</li>
+</ul>
 
-**STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
-- Activate prior knowledge and build context
-- Introduce key vocabulary and concepts
-- Explore the topic through discussion and shared activities
-- Set the purpose for learning
-${tlcKnowledge.available ? '\n*Implementation tip: Ensure all students can participate regardless of background knowledge*' : ''}
+<h2>STAGE 1: BUILDING THE FIELD (15-20% of lesson time)</h2>
+<ul>
+<li>Activate prior knowledge and build context</li>
+<li>Introduce key vocabulary and concepts</li>
+<li>Explore the topic through discussion and shared activities</li>
+<li>Set the purpose for learning</li>
+</ul>
+${tlcKnowledge.available ? '<p><em>Implementation tip: Ensure all students can participate regardless of background knowledge</em></p>' : ''}
 
-**STAGE 2: MODELING AND DECONSTRUCTION** (25-30% of lesson time)  
-- Teacher demonstrates or models the skill/concept
-- Break down examples step-by-step
-- Identify key features and patterns
-- Joint analysis of mentor texts or examples
-${tlcKnowledge.available ? '\n*Implementation tip: Use think-aloud protocols and interactive annotation*' : ''}
+<h2>STAGE 2: MODELING AND DECONSTRUCTION (25-30% of lesson time)</h2>
+<ul>
+<li>Teacher demonstrates or models the skill/concept</li>
+<li>Break down examples step-by-step</li>
+<li>Identify key features and patterns</li>
+<li>Joint analysis of mentor texts or examples</li>
+</ul>
+${tlcKnowledge.available ? '<p><em>Implementation tip: Use think-aloud protocols and interactive annotation</em></p>' : ''}
 
-**STAGE 3: JOINT CONSTRUCTION** (30-35% of lesson time)
-- Teacher and students work together
-- Guided practice with scaffolding
-- Collaborative problem-solving or writing
-- Strategic questioning and feedback
-${tlcKnowledge.available ? '\n*Implementation tip: Use talking protocols and ensure multiple students contribute*' : ''}
+<h2>STAGE 3: JOINT CONSTRUCTION (30-35% of lesson time)</h2>
+<ul>
+<li>Teacher and students work together</li>
+<li>Guided practice with scaffolding</li>
+<li>Collaborative problem-solving or writing</li>
+<li>Strategic questioning and feedback</li>
+</ul>
+${tlcKnowledge.available ? '<p><em>Implementation tip: Use talking protocols and ensure multiple students contribute</em></p>' : ''}
 
-**STAGE 4: INDEPENDENT CONSTRUCTION** (20-25% of lesson time)
-- Students work independently
-- Apply learning to new contexts
-- Individual assessment tasks
-- Self-reflection and peer feedback
-${tlcKnowledge.available ? '\n*Implementation tip: Provide scaffolds like graphic organizers and sentence starters*' : ''}
+<h2>STAGE 4: INDEPENDENT CONSTRUCTION (20-25% of lesson time)</h2>
+<ul>
+<li>Students work independently</li>
+<li>Apply learning to new contexts</li>
+<li>Individual assessment tasks</li>
+<li>Self-reflection and peer feedback</li>
+</ul>
+${tlcKnowledge.available ? '<p><em>Implementation tip: Provide scaffolds like graphic organizers and sentence starters</em></p>' : ''}
 
-**DIFFERENTIATION STRATEGIES**
-${contextualKnowledge.relevantDifferentiation ? Object.entries(contextualKnowledge.relevantDifferentiation).map(([need, strategies]) => `- ${need.toUpperCase()}: ${strategies.slice(0,3).join(', ')}`).join('\n') : '- Visual supports for diverse learners\n- Flexible grouping options\n- Choice in demonstration methods'}
+<h2>DIFFERENTIATION STRATEGIES</h2>
+<ul>
+${contextualKnowledge.relevantDifferentiation ? Object.entries(contextualKnowledge.relevantDifferentiation).map(([need, strategies]) => `<li><strong>${need.toUpperCase()}:</strong> ${strategies.slice(0,3).join(', ')}</li>`).join('\n') : '<li>Visual supports for diverse learners</li>\n<li>Flexible grouping options</li>\n<li>Choice in demonstration methods</li>'}
+</ul>
 
-**RESOURCES NEEDED**
-- Materials list
-- Technology requirements
-- Preparation notes
+<h2>RESOURCES NEEDED</h2>
+<ul>
+<li>Materials list</li>
+<li>Technology requirements</li>
+<li>Preparation notes</li>
+</ul>
 
-Make it practical, detailed, and immediately usable by teachers. Integrate TLC best practices throughout.`;
+<p>Make it practical, detailed, and immediately usable by teachers. Integrate TLC best practices throughout.</p>`;
 
       // Build messages array with LIMITED conversation history for speed (last 6 messages)
       const limitedHistory = conversationHistory.slice(-6);
