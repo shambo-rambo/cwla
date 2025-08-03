@@ -1,5 +1,11 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const unifiedKnowledge = require('./unifiedKnowledgeService');
+const ContextualResponseEngine = require('./contextualResponseEngine');
+const PredictiveLearningEngine = require('./predictiveLearningEngine');
+const AdaptiveResponseEngine = require('./adaptiveResponseEngine');
+const ConversationFlowIntelligence = require('./conversationFlowIntelligence');
+const LearningAnalyticsEngine = require('./learningAnalyticsEngine');
+const UserModelingEngine = require('./userModelingEngine');
 
 // Debug: Check if API key exists
 console.log('Anthropic API Key exists:', !!process.env.ANTHROPIC_API_KEY);
@@ -10,6 +16,17 @@ const anthropic = new Anthropic({
 });
 
 class AnthropicService {
+  constructor() {
+    // Initialize intelligence engines
+    this.contextualEngine = new ContextualResponseEngine();
+    this.predictiveEngine = new PredictiveLearningEngine();
+    this.adaptiveEngine = new AdaptiveResponseEngine();
+    this.flowIntelligence = new ConversationFlowIntelligence();
+    this.analyticsEngine = new LearningAnalyticsEngine();
+    this.userModelingEngine = new UserModelingEngine();
+    
+    console.log('📊 Lesson Planner Service initialized with advanced intelligence engines');
+  }
   
   /**
    * Extract lesson context from user input to provide relevant knowledge
@@ -104,17 +121,76 @@ You are an expert educational consultant specializing in teaching frameworks and
     }
   }
 
-  // Analyze if the lesson request has sufficient detail
-  isLessonRequestComplete(userInput) {
-    // For now, always return false to ensure clarifying questions are asked
-    // This can be made smarter later if needed
-    const keywords = ['subject', 'topic', 'grade', 'duration', 'objectives', 'assessment', 'students'];
-    const lowerInput = userInput.toLowerCase();
-    return keywords.every(keyword => lowerInput.includes(keyword));
+  // AI-powered assessment of lesson context completeness
+  async hasCompleteLessonContext(userInput, conversationHistory = []) {
+    try {
+      // Gather all user inputs from the conversation
+      const allUserInputs = conversationHistory
+        .filter(msg => msg.role === 'user')
+        .map(msg => msg.content)
+        .concat(userInput)
+        .join('\n\n');
+
+      // Use AI to assess if we have enough context for meaningful TLC lesson planning
+      const assessmentPrompt = `Analyze this conversation to determine if there's enough information to create a comprehensive TLC (Teaching and Learning Cycle) lesson plan.
+
+CONVERSATION CONTEXT:
+"${allUserInputs}"
+
+For effective TLC lesson planning, I need to know:
+- Subject area and specific topic/concept
+- Grade/year level of students  
+- Learning objectives or goals
+- Student demographics (class size, EAL/D students, learning support needs)
+- Lesson duration or timeframe
+- Any specific challenges or constraints
+
+ASSESSMENT TASK:
+Respond with either "COMPLETE" or "NEEDS_MORE_INFO" followed by a brief explanation.
+
+If COMPLETE: The conversation provides sufficient context for meaningful lesson planning.
+If NEEDS_MORE_INFO: Missing critical information that would make the lesson plan generic or ineffective.
+
+Focus on whether you could create a truly useful, targeted TLC lesson plan with the provided information.`;
+
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: assessmentPrompt }]
+      });
+
+      const assessment = response.content[0].text.trim();
+      return assessment.startsWith('COMPLETE');
+      
+    } catch (error) {
+      console.error('Context assessment error:', error);
+      // Default to asking questions if assessment fails
+      return false;
+    }
   }
 
   async generateClarifyingQuestions(userInput, conversationHistory = []) {
     try {
+      // Use intelligence engines to personalize questioning approach
+      const userId = 'lesson-planner-user'; // Could be passed in from API
+      
+      // Generate personalized context using user modeling
+      const personalizedContext = this.userModelingEngine.generatePersonalizedContext(userId);
+      
+      // Determine optimal response strategy
+      const responseStrategy = this.contextualEngine.determineResponseStrategy(
+        userInput, 
+        conversationHistory, 
+        { context: 'lesson_planning', requestType: 'clarifying_questions' }
+      );
+      
+      // Get conversation flow guidance
+      const flowGuidance = this.flowIntelligence.guideConversationFlow(
+        { lastUserInput: userInput },
+        conversationHistory,
+        { currentGoal: 'gather_lesson_context' }
+      );
+
       // Build messages array with conversation history
       const messages = conversationHistory.map(msg => ({
         role: msg.role,
@@ -125,24 +201,27 @@ You are an expert educational consultant specializing in teaching frameworks and
         role: 'user',
         content: `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
 
-I want to create a comprehensive lesson plan, but I need more details to make it perfect for your specific context.
+**INTELLIGENT QUESTIONING CONTEXT:**
+User Expertise: ${personalizedContext.expertiseLevel || 'unknown'} - ${responseStrategy.complexity || 'moderate'} complexity
+Learning Focus: ${personalizedContext.learningFocus || 'general TLC implementation'}
+Flow Status: ${flowGuidance.conversationHealth?.status || 'information_gathering'}
+
+I want to create a comprehensive TLC lesson plan, but I need more details to make it perfect for your specific context.
 
 <p><strong>User's request:</strong> "${userInput}"</p>
 
-<p>Please ask 3-4 targeted questions to gather the missing information I need to create the best possible lesson plan. Focus on:</p>
+<p>Please ask 3-4 targeted questions to gather the missing information I need to create the best possible TLC lesson plan. Adapt your questions based on the user expertise level and focus on:</p>
 
-<h3>Key Areas to Explore for Effective TLC Implementation:</h3>
+<h3>Strategic TLC Information Gathering:</h3>
 <ol>
-<li><strong>Subject & Context:</strong> What subject area? What grade level? What specific topic or concept?</li>
-<li><strong>TLC Experience:</strong> Have you used the Teaching & Learning Cycle before? Which TLC stage do you find most challenging?</li>
-<li><strong>Student Demographics:</strong> How many students? Any EAL/D students or students with learning support needs? Mixed ability levels?</li>
-<li><strong>Learning Goals:</strong> What should students know/do by the end? Any specific curriculum outcomes or assessment requirements?</li>
-<li><strong>Practical Details:</strong> Lesson duration? Available resources? Any constraints or challenges I should know about?</li>
+<li><strong>Subject & Context:</strong> What subject area? What grade level? What specific topic or learning concept?</li>
+<li><strong>TLC Implementation Context:</strong> Have you used the Teaching & Learning Cycle before? Which TLC stage (Field Building, Modeling, Joint Construction, Independent Construction) do you find most challenging?</li>
+<li><strong>Student Needs Assessment:</strong> How many students? Any EAL/D students or students with learning support needs? What's the mix of ability levels in your class?</li>
+<li><strong>Learning Objectives:</strong> What should students know/be able to do by the end? Any specific curriculum outcomes or assessment requirements?</li>
+<li><strong>Practical Constraints:</strong> Lesson duration? Available resources? Any classroom challenges or constraints I should know about?</li>
 </ol>
 
-<p>Format your response as friendly, specific questions that show you understand their request but need these key details to create something truly tailored to their classroom.</p>
-
-<p>Keep it conversational and encouraging - like a helpful colleague asking follow-up questions.</p>`
+<p>Format as friendly, specific questions that show understanding of their request and TLC pedagogy. ${responseStrategy.tone === 'encouraging' ? 'Be supportive and encouraging.' : 'Be direct and solution-focused.'}</p>`
       });
 
       const response = await anthropic.messages.create({
@@ -166,6 +245,13 @@ I want to create a comprehensive lesson plan, but I need more details to make it
 
   async generateLessonPlan(userInput, conversationHistory = []) {
     try {
+      // Use AI to intelligently assess if we have enough context for meaningful lesson planning
+      const hasCompleteContext = await this.hasCompleteLessonContext(userInput, conversationHistory);
+      
+      if (!hasCompleteContext) {
+        return await this.generateClarifyingQuestions(userInput, conversationHistory);
+      }
+
       // Gather all user inputs for complete context
       const allUserRequests = conversationHistory
         .filter(msg => msg.role === 'user')
