@@ -609,7 +609,8 @@ Perfect! Now I'm ready to provide expert feedback on your lesson plan.
       // Check if user has completed smart questioning and determine next workflow step
       const hasSmartQuestioning = conversationHistory.some(msg => 
         msg.role === 'assistant' && 
-        msg.content.includes('Smart Questions to Get Started')
+        (msg.content.includes('Smart Questions to Get Started') || 
+         msg.content.includes('Perfect! You\'ve chosen'))
       );
 
       if (hasSmartQuestioning && !isWorkflowSelection) {
