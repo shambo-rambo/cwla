@@ -23,7 +23,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import { Close, Fullscreen, FullscreenExit, ContentCopy, History, Delete, Add } from '@mui/icons-material';
+import { Close, Fullscreen, FullscreenExit, ContentCopy, History, Delete, Add, Send } from '@mui/icons-material';
 
 const Chatbot = ({ type, title, description, user, onClose }) => {
   const theme = useTheme();
@@ -433,12 +433,14 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       PaperProps={{
         sx: {
           height: isFullscreen || isMobile ? '100vh' : '80vh',
+          maxHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          overflow: 'hidden'
         }
       }}
     >
-      <DialogTitle sx={{ p: { xs: 2, sm: 3 }, borderBottom: 1, borderColor: 'divider' }}>
+      <DialogTitle sx={{ p: { xs: 1.5, sm: 2 }, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography 
@@ -578,11 +580,11 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
 
       <DialogContent sx={{ 
         flex: 1, 
-        p: 2, 
+        p: { xs: 1, sm: 2 }, 
         overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2
+        gap: { xs: 1, sm: 2 }
       }}>
         {messages.length === 0 && (
           <Box sx={{ textAlign: 'center', p: 4 }}>
@@ -740,17 +742,18 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
 
       {!hasActiveInteractiveOptions() && (
         <Box sx={{ 
-          p: { xs: 1.5, sm: 2 }, 
+          p: { xs: 1, sm: 1.5 }, 
           borderTop: 1, 
           borderColor: 'divider', 
           display: 'flex', 
-          gap: { xs: 0.75, sm: 1 },
-          flexDirection: { xs: 'column', sm: 'row' }
+          alignItems: 'flex-end',
+          gap: 1,
+          flexShrink: 0
         }}>
           <TextField
             fullWidth
             multiline
-            rows={{ xs: 2, sm: 3 }}
+            maxRows={isMobile ? 3 : 4}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => {
@@ -760,32 +763,38 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
               }
             }}
             placeholder={type === 'framework' 
-              ? 'Type here...'
-              : 'Type here...'
+              ? 'Type your question...'
+              : 'Describe your lesson...'
             }
             disabled={isLoading || isLimitReached}
             variant="outlined"
             size="small"
             sx={{
               '& .MuiInputBase-root': {
-                fontSize: { xs: '0.9rem', sm: '1rem' }
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                paddingRight: '8px'
               }
             }}
           />
-          <Button
-            variant="contained"
+          <IconButton
             onClick={sendMessage}
             disabled={isLoading || !inputMessage.trim() || isLimitReached}
             sx={{ 
-              alignSelf: { xs: 'stretch', sm: 'flex-end' }, 
-              minWidth: 'auto', 
-              px: { xs: 2, sm: 3 },
-              py: { xs: 1, sm: 1.5 },
-              fontSize: { xs: '0.85rem', sm: '0.875rem' }
+              bgcolor: 'primary.main',
+              color: 'white',
+              width: { xs: 40, sm: 44 },
+              height: { xs: 40, sm: 44 },
+              '&:hover': {
+                bgcolor: 'primary.dark'
+              },
+              '&:disabled': {
+                bgcolor: 'action.disabled',
+                color: 'action.disabled'
+              }
             }}
           >
-            Send
-          </Button>
+            <Send sx={{ fontSize: { xs: '1.1rem', sm: '1.2rem' } }} />
+          </IconButton>
         </Box>
       )}
     </Dialog>
