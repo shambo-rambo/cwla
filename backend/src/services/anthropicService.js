@@ -62,7 +62,9 @@ class AnthropicService {
 
   async generateFrameworkAnalysis(userInput) {
     try {
-      const prompt = `You are an expert educational consultant specializing in teaching frameworks and pedagogical approaches. 
+      const prompt = `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
+
+You are an expert educational consultant specializing in teaching frameworks and pedagogical approaches. 
 
 <p><strong>User Query:</strong> "${userInput}"</p>
 
@@ -119,7 +121,9 @@ class AnthropicService {
       
       messages.push({
         role: 'user',
-        content: `I want to create a comprehensive lesson plan, but I need more details to make it perfect for your specific context.
+        content: `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
+
+I want to create a comprehensive lesson plan, but I need more details to make it perfect for your specific context.
 
 <p><strong>User's request:</strong> "${userInput}"</p>
 
@@ -226,7 +230,9 @@ CRITICAL INSTRUCTION: Format your response as clean HTML. Use the EXACT structur
       
       messages.push({
         role: 'user',
-        content: `Perfect! You've chosen "I Do" - I'll create a complete lesson plan for you.
+        content: `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
+
+Perfect! You've chosen "I Do" - I'll create a complete lesson plan for you.
 
 <p><strong>Original request:</strong> "${originalRequest}"</p>
 
@@ -290,7 +296,9 @@ CRITICAL INSTRUCTION: Format your response as clean HTML. Use the EXACT structur
       
       messages.push({
         role: 'user',
-        content: `Perfect! You've chosen "We Do" - let's collaborate to create your lesson plan.
+        content: `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
+
+Perfect! You've chosen "We Do" - let's collaborate to create your lesson plan.
 
 <p><strong>Original request:</strong> "${originalRequest}"</p>
 
@@ -354,7 +362,9 @@ CRITICAL INSTRUCTION: Format your response as clean HTML. Use the EXACT structur
       
       messages.push({
         role: 'user',
-        content: `Excellent choice! You've selected "You Do" - I'll provide expert feedback on your lesson plan.
+        content: `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h3>, <strong>, <p>, <ol>, <li>.
+
+Excellent choice! You've selected "You Do" - I'll provide expert feedback on your lesson plan.
 
 <p><strong>Original request:</strong> "${originalRequest}"</p>
 
@@ -535,7 +545,9 @@ Click on one of the options above to proceed with your lesson planning!`
       const knowledgeContext = this.extractLessonContext(fullContext);
       const contextualKnowledge = unifiedKnowledge.getContextualKnowledge(knowledgeContext);
 
-      const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the Teaching and Learning Cycle (TLC). You have access to comprehensive TLC research and best practices.
+      const prompt = `CRITICAL INSTRUCTION: Respond ONLY in HTML format. Do not use markdown (no ##, **, *, etc.). Use HTML tags like <h2>, <h3>, <strong>, <p>, <ul>, <li>.
+
+You are an expert lesson planner who creates detailed, engaging lesson plans using the Teaching and Learning Cycle (TLC). You have access to comprehensive TLC research and best practices.
 
 <p><strong>Based on all the information provided:</strong> "${fullContext}"</p>
 
