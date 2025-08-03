@@ -2,15 +2,46 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Teaching Cycle App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#49a2d4" />
+    <title>Teaching Cycle AI</title>
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Prevent FOUC */
+      body { 
+        opacity: 0; 
+        transition: opacity 0.3s ease-in-out; 
+      }
+      body.loaded { 
+        opacity: 1; 
+      }
+      /* Prevent layout shift during loading */
+      #root {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1f2937 50%, #111827 100%);
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Prevent FOUC by adding loaded class when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('loaded');
+      });
+      // Fallback for when DOMContentLoaded has already fired
+      if (document.readyState === 'loading') {
+        // Do nothing, we'll wait for DOMContentLoaded
+      } else {
+        document.body.classList.add('loaded');
+      }
+    </script>
   </body>
 </html>

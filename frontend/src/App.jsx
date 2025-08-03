@@ -140,7 +140,7 @@ function App() {
               transition: 'all 0.3s ease'
             }}
           >
-            🚀 Sign in with Google
+            Sign in with Google
           </Button>
         </Box>
       </ThemeProvider>

@@ -432,39 +432,63 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       fullScreen={isFullscreen || isMobile}
       PaperProps={{
         sx: {
-          height: isFullscreen ? '100vh' : '80vh',
+          height: isFullscreen || isMobile ? '100vh' : '80vh',
           display: 'flex',
           flexDirection: 'column'
         }
       }}
     >
-      <DialogTitle sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
+      <DialogTitle sx={{ p: { xs: 2, sm: 3 }, borderBottom: 1, borderColor: 'divider' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            <Typography variant="h4" component="h3" sx={{ color: 'primary.main', mb: 1 }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography 
+              variant="h4" 
+              component="h3" 
+              sx={{ 
+                color: 'primary.main', 
+                mb: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '1.25rem', sm: '2rem' },
+                fontWeight: 600
+              }}
+            >
               {title}
             </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                display: { xs: 'none', sm: 'block' }
+              }}
+            >
               {description}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', gap: { xs: 0.25, sm: 0.5 } }}>
             <IconButton
               onClick={() => setShowSidebar(!showSidebar)}
               size="small"
               title="Conversation History"
+              sx={{ p: { xs: 0.5, sm: 1 } }}
             >
-              <History />
+              <History sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
             </IconButton>
-            <IconButton
-              onClick={() => setIsFullscreen(!isFullscreen)}
+            {!isMobile && (
+              <IconButton
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                size="small"
+                title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+                sx={{ p: { xs: 0.5, sm: 1 } }}
+              >
+                {isFullscreen ? <FullscreenExit sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} /> : <Fullscreen sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />}
+              </IconButton>
+            )}
+            <IconButton 
+              onClick={onClose} 
               size="small"
-              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              sx={{ p: { xs: 0.5, sm: 1 } }}
             >
-              {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
-            </IconButton>
-            <IconButton onClick={onClose} size="small">
-              <Close />
+              <Close sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
             </IconButton>
           </Box>
         </Box>
@@ -564,8 +588,8 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
           <Box sx={{ textAlign: 'center', p: 4 }}>
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
               {type === 'framework' 
-                ? 'Ask me about teaching frameworks, pedagogical approaches, or educational strategies!'
-                : 'Describe what lesson you\'d like to create and I\'ll build a detailed plan using the 4-stage Teaching and Learning Cycle!'
+                ? 'Ask me anything about the Teaching and Learning Cycle!'
+                : 'Describe what lesson you\'d like to create and I\'ll build a detailed plan using the Teaching and Learning Cycle!'
               }
             </Typography>
           </Box>
@@ -581,7 +605,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
           >
             <Card
               sx={{
-                maxWidth: '70%',
+                maxWidth: { xs: '85%', sm: '70%' },
                 bgcolor: message.role === 'user' ? 'primary.main' : 'background.paper',
                 color: message.role === 'user' ? 'primary.contrastText' : 'text.primary',
                 border: message.role === 'assistant' ? 1 : 0,
@@ -608,7 +632,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                   <ContentCopy fontSize="small" />
                 </IconButton>
               )}
-              <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+              <CardContent sx={{ p: { xs: 1, sm: 1.5 }, '&:last-child': { pb: { xs: 1, sm: 1.5 } } }}>
                 {message.role === 'assistant' ? (
                   (() => {
                     const interactiveData = parseInteractiveOptions(message.content);
@@ -702,8 +726,8 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
             <Card sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
-              <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <CardContent sx={{ p: { xs: 1, sm: 1.5 }, '&:last-child': { pb: { xs: 1, sm: 1.5 } } }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
                   Thinking...
                 </Typography>
               </CardContent>
@@ -715,27 +739,50 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       </DialogContent>
 
       {!hasActiveInteractiveOptions() && (
-        <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
+        <Box sx={{ 
+          p: { xs: 1.5, sm: 2 }, 
+          borderTop: 1, 
+          borderColor: 'divider', 
+          display: 'flex', 
+          gap: { xs: 0.75, sm: 1 },
+          flexDirection: { xs: 'column', sm: 'row' }
+        }}>
           <TextField
             fullWidth
             multiline
-            rows={3}
+            rows={{ xs: 2, sm: 3 }}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
             placeholder={type === 'framework' 
-              ? 'Ask about teaching frameworks, strategies, or pedagogical approaches...'
-              : 'Describe the lesson you want to create...'
+              ? 'Type here...'
+              : 'Type here...'
             }
             disabled={isLoading || isLimitReached}
             variant="outlined"
             size="small"
+            sx={{
+              '& .MuiInputBase-root': {
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }
+            }}
           />
           <Button
             variant="contained"
             onClick={sendMessage}
             disabled={isLoading || !inputMessage.trim() || isLimitReached}
-            sx={{ alignSelf: 'flex-end', minWidth: 'auto', px: 3 }}
+            sx={{ 
+              alignSelf: { xs: 'stretch', sm: 'flex-end' }, 
+              minWidth: 'auto', 
+              px: { xs: 2, sm: 3 },
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: '0.85rem', sm: '0.875rem' }
+            }}
           >
             Send
           </Button>

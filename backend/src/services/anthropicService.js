@@ -1,4 +1,5 @@
 const Anthropic = require('@anthropic-ai/sdk');
+const unifiedKnowledge = require('./unifiedKnowledgeService');
 
 // Debug: Check if API key exists
 console.log('Anthropic API Key exists:', !!process.env.ANTHROPIC_API_KEY);
@@ -9,6 +10,56 @@ const anthropic = new Anthropic({
 });
 
 class AnthropicService {
+  
+  /**
+   * Extract lesson context from user input to provide relevant knowledge
+   */
+  extractLessonContext(fullContext) {
+    const contextLower = fullContext.toLowerCase();
+    
+    // Extract subject
+    let subject = null;
+    if (contextLower.includes('english') || contextLower.includes('language arts')) {
+      subject = 'english';
+    } else if (contextLower.includes('science') || contextLower.includes('biology') || contextLower.includes('chemistry') || contextLower.includes('physics')) {
+      subject = 'science';
+    } else if (contextLower.includes('math') || contextLower.includes('mathematics')) {
+      subject = 'mathematics';
+    } else if (contextLower.includes('history') || contextLower.includes('social studies')) {
+      subject = 'history';
+    }
+    
+    // Extract challenges
+    const challenges = [];
+    if (contextLower.includes('engagement') || contextLower.includes('participation') || contextLower.includes('motivation')) {
+      challenges.push('engagement');
+    }
+    if (contextLower.includes('discussion') || contextLower.includes('talk') || contextLower.includes('sharing')) {
+      challenges.push('discussion');
+    }
+    if (contextLower.includes('writing') || contextLower.includes('independent work')) {
+      challenges.push('writing');
+    }
+    
+    // Extract student needs
+    const studentNeeds = [];
+    if (contextLower.includes('eal') || contextLower.includes('esl') || contextLower.includes('english language') || contextLower.includes('second language')) {
+      studentNeeds.push('eal/d support');
+    }
+    if (contextLower.includes('learning difficult') || contextLower.includes('support') || contextLower.includes('struggling')) {
+      studentNeeds.push('learning difficulties');
+    }
+    if (contextLower.includes('advanced') || contextLower.includes('gifted') || contextLower.includes('extension') || contextLower.includes('challenge')) {
+      studentNeeds.push('advanced learners');
+    }
+    
+    return {
+      subject,
+      challenges: challenges.length > 0 ? challenges : null,
+      studentNeeds: studentNeeds.length > 0 ? studentNeeds : null
+    };
+  }
+
   async generateFrameworkAnalysis(userInput) {
     try {
       const prompt = `You are an expert educational consultant specializing in teaching frameworks and pedagogical approaches. 
@@ -115,18 +166,20 @@ Keep it conversational and encouraging - like a helpful colleague asking follow-
             role: 'user',
             content: `You are a lesson planning assistant. A teacher wants help with: "${userInput}"
 
-Present them with three workflow options using the gradual release of responsibility model. Format your response exactly like this:
+CRITICAL INSTRUCTION: ABSOLUTELY NO EMOJIS ALLOWED. No robot emoji, no handshake emoji, no person emoji, no decorative characters of any kind. Text only.
 
-**Welcome to the Lesson Planner!** 👋
+Present them with three workflow options using the gradual release of responsibility model. Copy this exact text without any modifications or additions:
+
+**Welcome to the Lesson Planner!**
 
 I can help you in three different ways based on how much support you'd like:
 
 **WORKFLOW OPTIONS:**
 
 \`\`\`interactive-options
-- 🤖 **"I Do"** - I'll create the complete lesson plan for you
-- 🤝 **"We Do"** - We'll collaborate through guided questions  
-- 👤 **"You Do"** - You provide your lesson draft, I'll give feedback
+- **"I Do"** - I'll create the complete lesson plan for you
+- **"We Do"** - We'll collaborate through guided questions  
+- **"You Do"** - You provide your lesson draft, I'll give feedback
 \`\`\`
 
 **Choose your preferred workflow:**
@@ -158,6 +211,11 @@ Which workflow would work best for your needs today?`
       // Get the original lesson request from the first message
       const originalRequest = conversationHistory.find(msg => msg.role === 'user')?.content || userInput;
       
+      // Get TLC knowledge for enhanced lesson creation
+      const tlcKnowledge = unifiedKnowledge.getKnowledgeForLessonPlanning();
+      const knowledgeContext = this.extractLessonContext(originalRequest);
+      const contextualKnowledge = unifiedKnowledge.getContextualKnowledge(knowledgeContext);
+      
       const messages = conversationHistory.map(msg => ({
         role: msg.role,
         content: msg.content
@@ -165,51 +223,85 @@ Which workflow would work best for your needs today?`
       
       messages.push({
         role: 'user',
-        content: `Great! You've chosen "I Do" - I'll create a complete lesson plan for you.
+        content: `Perfect! You have chosen the "I Do" workflow. I will create a complete lesson plan for you using evidence-based Teaching and Learning Cycle practices.
 
 Original request: "${originalRequest}"
 
-Since you want me to do all the work, I'll create a comprehensive lesson plan using the 4-stage Teaching and Learning Cycle. I'll make reasonable assumptions about your context and create something ready to use.
+Since you want me to handle all the planning, I will create a comprehensive lesson plan using the Teaching and Learning Cycle with research-based best practices integrated throughout.
 
-Please create a detailed, ready-to-implement lesson plan following this structure:
+${tlcKnowledge.available ? `
+EVIDENCE-BASED TLC PRINCIPLES TO INTEGRATE:
+${tlcKnowledge.implementationGuidelines?.map(guideline => `• ${guideline}`).join('\n') || ''}
 
-**LESSON OVERVIEW**
-- Subject/Topic:
-- Grade Level:
-- Duration:
-- Learning Objectives:
-- Success Criteria:
+DIFFERENTIATION STRATEGIES TO INCLUDE:
+• EAL/D Support: ${tlcKnowledge.differentiationStrategies?.ealdSupport?.slice(0,2).join(', ') || 'Visual supports, multilingual resources'}
+• Learning Support: ${tlcKnowledge.differentiationStrategies?.learningDifficulties?.slice(0,2).join(', ') || 'Visual aids, chunked information'}
+• Advanced Learners: ${tlcKnowledge.differentiationStrategies?.advancedLearners?.slice(0,2).join(', ') || 'Tiered assignments, independent study'}
 
-**STAGE 1: BUILDING THE FIELD** (15-20% of lesson time)
-- Activate prior knowledge and build context
-- Introduce key vocabulary and concepts
-- Explore the topic through discussion and shared activities
-- Set the purpose for learning
+TROUBLESHOOTING PREVENTION:
+${contextualKnowledge.relevantTroubleshooting ? Object.entries(contextualKnowledge.relevantTroubleshooting).map(([key, tips]) => `• ${key}: ${tips[0] || ''}`).join('\n') : '• Use interactive strategies to maintain engagement\n• Include talking protocols for structured collaboration'}
+` : ''}
 
-**STAGE 2: MODELING AND DECONSTRUCTION** (25-30% of lesson time)  
-- Teacher demonstrates or models the skill/concept
-- Break down examples step-by-step
-- Identify key features and patterns
-- Joint analysis of mentor texts or examples
+IMPORTANT: Please format your response as clean, professional HTML that can be easily copied and pasted. Use proper HTML structure with headings, lists, and clear formatting. Do not include any emojis or decorative characters.
 
-**STAGE 3: JOINT CONSTRUCTION** (30-35% of lesson time)
-- Teacher and students work together
-- Guided practice with scaffolding
-- Collaborative problem-solving or writing
-- Strategic questioning and feedback
+Create a detailed, ready-to-implement lesson plan following this HTML structure:
 
-**STAGE 4: INDEPENDENT CONSTRUCTION** (20-25% of lesson time)
-- Students work independently
-- Apply learning to new contexts
-- Individual assessment tasks
-- Self-reflection and peer feedback
+<h2>LESSON OVERVIEW</h2>
+<ul>
+<li>Subject/Topic:</li>
+<li>Grade Level:</li>
+<li>Duration:</li>
+<li>Learning Objectives:</li>
+<li>Success Criteria:</li>
+</ul>
 
-**RESOURCES NEEDED**
-- Materials list
-- Technology requirements
-- Preparation notes
+<h2>STAGE 1: BUILDING THE FIELD (15-20% of lesson time)</h2>
+<ul>
+<li>Activate prior knowledge and build context</li>
+<li>Introduce key vocabulary and concepts</li>
+<li>Explore the topic through discussion and shared activities</li>
+<li>Set the purpose for learning</li>
+</ul>
 
-Make it practical, detailed, and immediately usable.`
+<h2>STAGE 2: MODELING AND DECONSTRUCTION (25-30% of lesson time)</h2>
+<ul>
+<li>Teacher demonstrates or models the skill/concept</li>
+<li>Break down examples step-by-step</li>
+<li>Identify key features and patterns</li>
+<li>Joint analysis of mentor texts or examples</li>
+</ul>
+
+<h2>STAGE 3: JOINT CONSTRUCTION (30-35% of lesson time)</h2>
+<ul>
+<li>Teacher and students work together</li>
+<li>Guided practice with scaffolding</li>
+<li>Collaborative problem-solving or writing</li>
+<li>Strategic questioning and feedback</li>
+</ul>
+
+<h2>STAGE 4: INDEPENDENT CONSTRUCTION (20-25% of lesson time)</h2>
+<ul>
+<li>Students work independently</li>
+<li>Apply learning to new contexts</li>
+<li>Individual assessment tasks</li>
+<li>Self-reflection and peer feedback</li>
+</ul>
+
+<h2>RESOURCES NEEDED</h2>
+<ul>
+<li>Materials list</li>
+<li>Technology requirements</li>
+<li>Preparation notes</li>
+</ul>
+
+<h2>DIFFERENTIATION STRATEGIES</h2>
+<ul>
+<li>EAL/D Support strategies</li>
+<li>Learning Support accommodations</li>
+<li>Advanced Learner extensions</li>
+</ul>
+
+Make it practical, detailed, immediately usable, and ensure all output is in clean HTML format without any emojis.`
       });
 
       const response = await anthropic.messages.create({
@@ -300,12 +392,12 @@ Please answer 2-3 of these questions that feel most important to you, and I'll a
 
 Please paste your lesson plan draft below, and I'll provide:
 
-✅ **Constructive feedback** on structure and pedagogy
-✅ **Alignment check** with the 4-stage Teaching and Learning Cycle
-✅ **Enhancement suggestions** for student engagement
-✅ **Differentiation recommendations** for diverse learners
-✅ **Assessment improvement** ideas
-✅ **Resource and timing** optimization tips
+• **Constructive feedback** on structure and pedagogy
+• **Alignment check** with the Teaching and Learning Cycle
+• **Enhancement suggestions** for student engagement
+• **Differentiation recommendations** for diverse learners
+• **Assessment improvement** ideas
+• **Resource and timing** optimization tips
 
 **What to include in your lesson plan:**
 - Learning objectives
@@ -314,7 +406,7 @@ Please paste your lesson plan draft below, and I'll provide:
 - Assessment strategies
 - Any specific concerns or areas you'd like me to focus on
 
-Just paste your lesson plan when you're ready, and I'll give you detailed, actionable feedback to make it even better! 📚`
+Just paste your lesson plan when you're ready, and I'll give you detailed, actionable feedback to make it even better!`
       });
 
       const response = await anthropic.messages.create({
@@ -397,9 +489,30 @@ Just paste your lesson plan when you're ready, and I'll give you detailed, actio
 
       const fullContext = allUserRequests ? `${userInput}\n\nAdditional details: ${allUserRequests}` : userInput;
 
-      const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the 4-stage Teaching and Learning Cycle (TLC).
+      // Get TLC knowledge base for enhanced lesson planning
+      const tlcKnowledge = unifiedKnowledge.getKnowledgeForLessonPlanning();
+      const knowledgeContext = this.extractLessonContext(fullContext);
+      const contextualKnowledge = unifiedKnowledge.getContextualKnowledge(knowledgeContext);
+
+      const prompt = `You are an expert lesson planner who creates detailed, engaging lesson plans using the Teaching and Learning Cycle (TLC). You have access to comprehensive TLC research and best practices.
 
 Based on all the information provided: "${fullContext}"
+
+${tlcKnowledge.available ? `
+**TLC IMPLEMENTATION GUIDELINES** (Research-Based):
+${tlcKnowledge.implementationGuidelines?.map(guideline => `- ${guideline}`).join('\n') || ''}
+
+**DIFFERENTIATION STRATEGIES**:
+- EAL/D Support: ${tlcKnowledge.differentiationStrategies?.ealdSupport?.slice(0,2).join(', ') || 'Visual supports, multilingual resources'}
+- Learning Support: ${tlcKnowledge.differentiationStrategies?.learningDifficulties?.slice(0,2).join(', ') || 'Visual aids, chunked information'}
+- Advanced Learners: ${tlcKnowledge.differentiationStrategies?.advancedLearners?.slice(0,2).join(', ') || 'Tiered assignments, independent study'}
+
+**TROUBLESHOOTING TIPS** (Evidence-Based):
+${contextualKnowledge.relevantTroubleshooting ? Object.entries(contextualKnowledge.relevantTroubleshooting).map(([key, tips]) => `- ${key}: ${tips.slice(0,2).join(', ')}`).join('\n') : '- Use interactive annotation and think-pair-share for engagement\n- Use talking protocols for joint construction\n- Provide graphic organizers for independent work'}
+
+**QUALITY INDICATORS** (Look for these signs of success):
+${tlcKnowledge.qualityIndicators ? Object.entries(tlcKnowledge.qualityIndicators).map(([stage, indicators]) => `- ${stage.replace(/([A-Z])/g, ' $1').trim()}: ${indicators[0] || ''}`).join('\n') : ''}
+` : ''}
 
 Create a comprehensive lesson plan with the following structure:
 
@@ -415,31 +528,38 @@ Create a comprehensive lesson plan with the following structure:
 - Introduce key vocabulary and concepts
 - Explore the topic through discussion and shared activities
 - Set the purpose for learning
+${tlcKnowledge.available ? '\n*Implementation tip: Ensure all students can participate regardless of background knowledge*' : ''}
 
 **STAGE 2: MODELING AND DECONSTRUCTION** (25-30% of lesson time)  
 - Teacher demonstrates or models the skill/concept
 - Break down examples step-by-step
 - Identify key features and patterns
 - Joint analysis of mentor texts or examples
+${tlcKnowledge.available ? '\n*Implementation tip: Use think-aloud protocols and interactive annotation*' : ''}
 
 **STAGE 3: JOINT CONSTRUCTION** (30-35% of lesson time)
 - Teacher and students work together
 - Guided practice with scaffolding
 - Collaborative problem-solving or writing
 - Strategic questioning and feedback
+${tlcKnowledge.available ? '\n*Implementation tip: Use talking protocols and ensure multiple students contribute*' : ''}
 
 **STAGE 4: INDEPENDENT CONSTRUCTION** (20-25% of lesson time)
 - Students work independently
 - Apply learning to new contexts
 - Individual assessment tasks
 - Self-reflection and peer feedback
+${tlcKnowledge.available ? '\n*Implementation tip: Provide scaffolds like graphic organizers and sentence starters*' : ''}
+
+**DIFFERENTIATION STRATEGIES**
+${contextualKnowledge.relevantDifferentiation ? Object.entries(contextualKnowledge.relevantDifferentiation).map(([need, strategies]) => `- ${need.toUpperCase()}: ${strategies.slice(0,3).join(', ')}`).join('\n') : '- Visual supports for diverse learners\n- Flexible grouping options\n- Choice in demonstration methods'}
 
 **RESOURCES NEEDED**
 - Materials list
 - Technology requirements
 - Preparation notes
 
-Make it practical, detailed, and immediately usable by teachers.`;
+Make it practical, detailed, and immediately usable by teachers. Integrate TLC best practices throughout.`;
 
       // Build messages array with LIMITED conversation history for speed (last 6 messages)
       const limitedHistory = conversationHistory.slice(-6);

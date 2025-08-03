@@ -184,9 +184,22 @@ class DatabaseService {
 
   async checkChatLimits(userId, chatType, conversationId = null) {
     try {
-      // Check conversation count limit (max 5 per chat type)
+      // Get user email to check for admin exemption
+      const userResult = await this.pool.query(
+        `SELECT user_email FROM conversations WHERE user_id = $1 LIMIT 1`,
+        [userId]
+      );
+      
+      const userEmail = userResult.rows[0]?.user_email;
+      
+      // Admin exemption for simon.hamblin@gmail.com - no limits
+      if (userEmail === 'simon.hamblin@gmail.com') {
+        return { exceedsLimit: false };
+      }
+
+      // Check conversation count limit (max 3 per chat type)
       const chatCount = await this.getUserChatCount(userId, chatType);
-      if (chatCount >= 5) {
+      if (chatCount >= 3) {
         return {
           exceedsLimit: true,
           limitType: 'chat_count',
