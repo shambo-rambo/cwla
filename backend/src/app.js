@@ -30,7 +30,7 @@ app.use(express.json());
 app.options('*', cors());
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Hello from backend', version: '2.0' });
+  
 });
 
 app.get('/health', (req, res) => {

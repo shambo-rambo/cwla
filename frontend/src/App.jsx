@@ -4,6 +4,7 @@ import { auth, googleProvider } from './firebase'
 import LearningCycleContent from './components/LearningCycleContent'
 import AdminDashboard from './components/AdminDashboard'
 import { ThemeProvider, CssBaseline, Box, Typography, Card, Button } from '@mui/material'
+import { Google } from '@mui/icons-material'
 import { createAppTheme } from './theme'
 
 function App() {
@@ -102,6 +103,7 @@ function App() {
             onClick={handleGoogleLogin}
             variant="contained"
             size="large"
+            startIcon={<Google />}
             sx={{
               px: 4,
               py: 2,
