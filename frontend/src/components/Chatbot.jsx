@@ -432,65 +432,93 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       fullScreen={isFullscreen || isMobile}
       PaperProps={{
         sx: {
-          height: isFullscreen || isMobile ? '100vh' : '80vh',
+          height: isMobile ? '100vh' : (isFullscreen ? '100vh' : '80vh'),
           maxHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          position: 'relative',
+          ...(isMobile && {
+            margin: 0,
+            borderRadius: 0,
+            maxWidth: '100vw',
+            width: '100vw',
+            maxHeight: '100vh'
+          })
         }
       }}
     >
-      <DialogTitle sx={{ p: { xs: 1.5, sm: 2 }, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
+      <DialogTitle 
+        sx={{ 
+          p: isMobile ? 1 : 2, 
+          borderBottom: 1, 
+          borderColor: 'divider', 
+          flexShrink: 0,
+          minHeight: 'auto'
+        }}
+      >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ flex: 1, minWidth: 0, pr: 1 }}>
             <Typography 
-              variant="h4" 
+              variant={isMobile ? "h6" : "h4"} 
               component="h3" 
               sx={{ 
                 color: 'primary.main', 
-                mb: { xs: 0.5, sm: 1 },
-                fontSize: { xs: '1.25rem', sm: '2rem' },
-                fontWeight: 600
+                mb: isMobile ? 0 : 0.5,
+                fontWeight: 600,
+                lineHeight: 1.2,
+                fontSize: isMobile ? '1.1rem' : '2rem'
               }}
             >
               {title}
             </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: 'text.secondary',
-                fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                display: { xs: 'none', sm: 'block' }
-              }}
-            >
-              {description}
-            </Typography>
+            {!isMobile && (
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'text.secondary',
+                  lineHeight: 1.2
+                }}
+              >
+                {description}
+              </Typography>
+            )}
           </Box>
-          <Box sx={{ display: 'flex', gap: { xs: 0.25, sm: 0.5 } }}>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
             <IconButton
               onClick={() => setShowSidebar(!showSidebar)}
               size="small"
               title="Conversation History"
-              sx={{ p: { xs: 0.5, sm: 1 } }}
+              sx={{ 
+                p: 0.5,
+                minWidth: 32,
+                width: 32,
+                height: 32
+              }}
             >
-              <History sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
+              <History sx={{ fontSize: '1.2rem' }} />
             </IconButton>
             {!isMobile && (
               <IconButton
                 onClick={() => setIsFullscreen(!isFullscreen)}
                 size="small"
                 title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-                sx={{ p: { xs: 0.5, sm: 1 } }}
+                sx={{ p: 0.5, minWidth: 32, width: 32, height: 32 }}
               >
-                {isFullscreen ? <FullscreenExit sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} /> : <Fullscreen sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />}
+                {isFullscreen ? <FullscreenExit sx={{ fontSize: '1.2rem' }} /> : <Fullscreen sx={{ fontSize: '1.2rem' }} />}
               </IconButton>
             )}
             <IconButton 
               onClick={onClose} 
               size="small"
-              sx={{ p: { xs: 0.5, sm: 1 } }}
+              sx={{ 
+                p: 0.5,
+                minWidth: 32,
+                width: 32,
+                height: 32
+              }}
             >
-              <Close sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
+              <Close sx={{ fontSize: '1.2rem' }} />
             </IconButton>
           </Box>
         </Box>
@@ -504,7 +532,8 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         variant="temporary"
         sx={{
           '& .MuiDrawer-paper': {
-            width: 300,
+            width: isMobile ? '80vw' : 300,
+            maxWidth: '80vw',
             position: 'absolute',
             height: '100%',
             bgcolor: 'background.paper',
@@ -519,7 +548,9 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
       >
         <Box sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">Conversations</Typography>
+            <Typography variant="h6" sx={{ fontSize: isMobile ? '1rem' : '1.25rem' }}>
+              Conversations
+            </Typography>
             <IconButton onClick={startNewConversation} size="small" title="New Conversation">
               <Add />
             </IconButton>
@@ -541,14 +572,14 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                     secondary={new Date(conversation.created_at).toLocaleDateString()}
                     primaryTypographyProps={{
                       sx: { 
-                        fontSize: '0.875rem',
+                        fontSize: isMobile ? '0.8rem' : '0.875rem',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap'
                       }
                     }}
                     secondaryTypographyProps={{
-                      sx: { fontSize: '0.75rem' }
+                      sx: { fontSize: isMobile ? '0.7rem' : '0.75rem' }
                     }}
                   />
                   <IconButton
@@ -571,6 +602,12 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                   primary="No conversations yet"
                   secondary="Start chatting to create your first conversation"
                   sx={{ textAlign: 'center', color: 'text.secondary' }}
+                  primaryTypographyProps={{
+                    sx: { fontSize: isMobile ? '0.8rem' : '0.875rem' }
+                  }}
+                  secondaryTypographyProps={{
+                    sx: { fontSize: isMobile ? '0.7rem' : '0.75rem' }
+                  }}
                 />
               </ListItem>
             )}
@@ -580,15 +617,22 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
 
       <DialogContent sx={{ 
         flex: 1, 
-        p: { xs: 1, sm: 2 }, 
+        p: isMobile ? 1 : 2, 
         overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: { xs: 1, sm: 2 }
+        gap: isMobile ? 1 : 2,
+        WebkitOverflowScrolling: 'touch'  // Smooth scrolling on iOS
       }}>
         {messages.length === 0 && (
-          <Box sx={{ textAlign: 'center', p: 4 }}>
-            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+          <Box sx={{ textAlign: 'center', p: isMobile ? 2 : 4 }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'text.secondary',
+                fontSize: isMobile ? '0.9rem' : '1rem'
+              }}
+            >
               {type === 'framework' 
                 ? 'Ask me anything about the Teaching and Learning Cycle!'
                 : 'Describe what lesson you\'d like to create and I\'ll build a detailed plan using the Teaching and Learning Cycle!'
@@ -607,7 +651,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
           >
             <Card
               sx={{
-                maxWidth: { xs: '85%', sm: '70%' },
+                maxWidth: isMobile ? '95%' : '70%',
                 bgcolor: message.role === 'user' ? 'primary.main' : 'background.paper',
                 color: message.role === 'user' ? 'primary.contrastText' : 'text.primary',
                 border: message.role === 'assistant' ? 1 : 0,
@@ -621,20 +665,26 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                   onClick={() => copyToClipboard(message.content)}
                   sx={{
                     position: 'absolute',
-                    top: 8,
-                    right: 8,
+                    top: 4,
+                    right: 4,
                     bgcolor: 'background.paper',
                     boxShadow: 1,
                     zIndex: 1,
+                    width: 28,
+                    height: 28,
                     '&:hover': {
                       bgcolor: 'grey.100'
                     }
                   }}
                 >
-                  <ContentCopy fontSize="small" />
+                  <ContentCopy sx={{ fontSize: '0.9rem' }} />
                 </IconButton>
               )}
-              <CardContent sx={{ p: { xs: 1, sm: 1.5 }, '&:last-child': { pb: { xs: 1, sm: 1.5 } } }}>
+              <CardContent sx={{ 
+                p: isMobile ? 1 : 1.5, 
+                '&:last-child': { pb: isMobile ? 1 : 1.5 },
+                pr: message.role === 'assistant' ? (isMobile ? 5 : 6) : (isMobile ? 1 : 1.5)
+              }}>
                 {message.role === 'assistant' ? (
                   (() => {
                     const interactiveData = parseInteractiveOptions(message.content);
@@ -646,17 +696,51 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                           {interactiveData.beforeOptions && (
                             <ReactMarkdown
                               components={{
-                                p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                                p: ({ children }) => <Typography variant="body2" sx={{ 
+                                  mb: 1, 
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem',
+                                  lineHeight: 1.4
+                                }}>{children}</Typography>,
                                 ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
                                 ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
-                                li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
-                                strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
-                                em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
-                                h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
-                                blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
+                                li: ({ children }) => <Box component="li" sx={{ 
+                                  my: 0.25,
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Box>,
+                                strong: ({ children }) => <Typography component="strong" sx={{ 
+                                  fontWeight: 600,
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Typography>,
+                                em: ({ children }) => <Typography component="em" sx={{ 
+                                  fontStyle: 'italic',
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Typography>,
+                                h1: ({ children }) => <Typography variant="h6" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '1rem' : '1.25rem'
+                                }}>{children}</Typography>,
+                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '0.95rem' : '1.1rem'
+                                }}>{children}</Typography>,
+                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '0.9rem' : '1rem'
+                                }}>{children}</Typography>,
+                                code: ({ children }) => <Chip label={children} size="small" sx={{ 
+                                  fontSize: isMobile ? '0.7rem' : '0.75rem' 
+                                }} />,
+                                blockquote: ({ children }) => <Box sx={{ 
+                                  borderLeft: 3, 
+                                  borderColor: 'primary.main', 
+                                  pl: 1, 
+                                  my: 1, 
+                                  fontStyle: 'italic',
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Box>
                               }}
                             >
                               {interactiveData.beforeOptions}
@@ -675,17 +759,51 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                           {interactiveData.afterOptions && (
                             <ReactMarkdown
                               components={{
-                                p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                                p: ({ children }) => <Typography variant="body2" sx={{ 
+                                  mb: 1,
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem',
+                                  lineHeight: 1.4
+                                }}>{children}</Typography>,
                                 ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
                                 ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
-                                li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
-                                strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
-                                em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
-                                h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                                code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
-                                blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
+                                li: ({ children }) => <Box component="li" sx={{ 
+                                  my: 0.25,
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Box>,
+                                strong: ({ children }) => <Typography component="strong" sx={{ 
+                                  fontWeight: 600,
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Typography>,
+                                em: ({ children }) => <Typography component="em" sx={{ 
+                                  fontStyle: 'italic',
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Typography>,
+                                h1: ({ children }) => <Typography variant="h6" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '1rem' : '1.25rem'
+                                }}>{children}</Typography>,
+                                h2: ({ children }) => <Typography variant="subtitle1" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '0.95rem' : '1.1rem'
+                                }}>{children}</Typography>,
+                                h3: ({ children }) => <Typography variant="subtitle2" sx={{ 
+                                  color: 'primary.main', 
+                                  my: 1,
+                                  fontSize: isMobile ? '0.9rem' : '1rem'
+                                }}>{children}</Typography>,
+                                code: ({ children }) => <Chip label={children} size="small" sx={{ 
+                                  fontSize: isMobile ? '0.7rem' : '0.75rem' 
+                                }} />,
+                                blockquote: ({ children }) => <Box sx={{ 
+                                  borderLeft: 3, 
+                                  borderColor: 'primary.main', 
+                                  pl: 1, 
+                                  my: 1, 
+                                  fontStyle: 'italic',
+                                  fontSize: isMobile ? '0.85rem' : '0.875rem'
+                                }}>{children}</Box>
                               }}
                             >
                               {interactiveData.afterOptions}
@@ -697,17 +815,51 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                       return (
                         <ReactMarkdown
                           components={{
-                            p: ({ children }) => <Typography variant="body2" sx={{ mb: 1 }}>{children}</Typography>,
+                            p: ({ children }) => <Typography variant="body2" sx={{ 
+                              mb: 1,
+                              fontSize: isMobile ? '0.85rem' : '0.875rem',
+                              lineHeight: 1.4
+                            }}>{children}</Typography>,
                             ul: ({ children }) => <Box component="ul" sx={{ my: 1, pl: 2 }}>{children}</Box>,
                             ol: ({ children }) => <Box component="ol" sx={{ my: 1, pl: 2 }}>{children}</Box>,
-                            li: ({ children }) => <Box component="li" sx={{ my: 0.25 }}>{children}</Box>,
-                            strong: ({ children }) => <Typography component="strong" sx={{ fontWeight: 600 }}>{children}</Typography>,
-                            em: ({ children }) => <Typography component="em" sx={{ fontStyle: 'italic' }}>{children}</Typography>,
-                            h1: ({ children }) => <Typography variant="h6" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                            h2: ({ children }) => <Typography variant="subtitle1" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                            h3: ({ children }) => <Typography variant="subtitle2" sx={{ color: 'primary.main', my: 1 }}>{children}</Typography>,
-                            code: ({ children }) => <Chip label={children} size="small" sx={{ fontSize: '0.75rem' }} />,
-                            blockquote: ({ children }) => <Box sx={{ borderLeft: 3, borderColor: 'primary.main', pl: 1, my: 1, fontStyle: 'italic' }}>{children}</Box>
+                            li: ({ children }) => <Box component="li" sx={{ 
+                              my: 0.25,
+                              fontSize: isMobile ? '0.85rem' : '0.875rem'
+                            }}>{children}</Box>,
+                            strong: ({ children }) => <Typography component="strong" sx={{ 
+                              fontWeight: 600,
+                              fontSize: isMobile ? '0.85rem' : '0.875rem'
+                            }}>{children}</Typography>,
+                            em: ({ children }) => <Typography component="em" sx={{ 
+                              fontStyle: 'italic',
+                              fontSize: isMobile ? '0.85rem' : '0.875rem'
+                            }}>{children}</Typography>,
+                            h1: ({ children }) => <Typography variant="h6" sx={{ 
+                              color: 'primary.main', 
+                              my: 1,
+                              fontSize: isMobile ? '1rem' : '1.25rem'
+                            }}>{children}</Typography>,
+                            h2: ({ children }) => <Typography variant="subtitle1" sx={{ 
+                              color: 'primary.main', 
+                              my: 1,
+                              fontSize: isMobile ? '0.95rem' : '1.1rem'
+                            }}>{children}</Typography>,
+                            h3: ({ children }) => <Typography variant="subtitle2" sx={{ 
+                              color: 'primary.main', 
+                              my: 1,
+                              fontSize: isMobile ? '0.9rem' : '1rem'
+                            }}>{children}</Typography>,
+                            code: ({ children }) => <Chip label={children} size="small" sx={{ 
+                              fontSize: isMobile ? '0.7rem' : '0.75rem' 
+                            }} />,
+                            blockquote: ({ children }) => <Box sx={{ 
+                              borderLeft: 3, 
+                              borderColor: 'primary.main', 
+                              pl: 1, 
+                              my: 1, 
+                              fontStyle: 'italic',
+                              fontSize: isMobile ? '0.85rem' : '0.875rem'
+                            }}>{children}</Box>
                           }}
                         >
                           {message.content}
@@ -716,7 +868,14 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
                     }
                   })()
                 ) : (
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      whiteSpace: 'pre-wrap',
+                      fontSize: isMobile ? '0.85rem' : '0.875rem',
+                      lineHeight: 1.4
+                    }}
+                  >
                     {message.content}
                   </Typography>
                 )}
@@ -728,8 +887,14 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
             <Card sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
-              <CardContent sx={{ p: { xs: 1, sm: 1.5 }, '&:last-child': { pb: { xs: 1, sm: 1.5 } } }}>
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
+              <CardContent sx={{ p: isMobile ? 1 : 1.5, '&:last-child': { pb: isMobile ? 1 : 1.5 } }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'text.secondary',
+                    fontSize: isMobile ? '0.85rem' : '0.875rem'
+                  }}
+                >
                   Thinking...
                 </Typography>
               </CardContent>
@@ -742,13 +907,15 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
 
       {!hasActiveInteractiveOptions() && (
         <Box sx={{ 
-          p: { xs: 1, sm: 1.5 }, 
+          p: isMobile ? 1 : 1.5, 
           borderTop: 1, 
           borderColor: 'divider', 
           display: 'flex', 
           alignItems: 'flex-end',
           gap: 1,
-          flexShrink: 0
+          flexShrink: 0,
+          backgroundColor: 'background.paper',
+          position: 'relative'
         }}>
           <TextField
             fullWidth
@@ -771,8 +938,13 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
             size="small"
             sx={{
               '& .MuiInputBase-root': {
-                fontSize: { xs: '0.9rem', sm: '1rem' },
-                paddingRight: '8px'
+                fontSize: isMobile ? '1rem' : '1rem',  // Prevents zoom on iOS
+                paddingRight: '8px',
+                paddingTop: '8px',
+                paddingBottom: '8px'
+              },
+              '& .MuiInputBase-input': {
+                fontSize: isMobile ? '1rem' : '1rem'  // Prevents zoom on iOS
               }
             }}
           />
@@ -782,8 +954,8 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
             sx={{ 
               bgcolor: 'primary.main',
               color: 'white',
-              width: { xs: 40, sm: 44 },
-              height: { xs: 40, sm: 44 },
+              width: isMobile ? 40 : 44,
+              height: isMobile ? 40 : 44,
               '&:hover': {
                 bgcolor: 'primary.dark'
               },
@@ -793,7 +965,7 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
               }
             }}
           >
-            <Send sx={{ fontSize: { xs: '1.1rem', sm: '1.2rem' } }} />
+            <Send sx={{ fontSize: isMobile ? '1.1rem' : '1.2rem' }} />
           </IconButton>
         </Box>
       )}

@@ -9,7 +9,6 @@ import { createAppTheme } from './theme'
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [backendMessage, setBackendMessage] = useState('Loading...')
   const [error, setError] = useState(null)
   const [darkMode, setDarkMode] = useState(true)
   const [showAdmin, setShowAdmin] = useState(false)
@@ -22,18 +21,6 @@ function App() {
       setLoading(false)
     })
 
-    const fetchBackendMessage = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/`)
-        const data = await response.json()
-        setBackendMessage(data.message)
-      } catch (err) {
-        setError('Failed to connect to backend')
-        console.error('Error:', err)
-      }
-    }
-
-    fetchBackendMessage()
 
     return () => unsubscribe()
   }, [])
@@ -111,17 +98,6 @@ function App() {
           >
             Transform your teaching with AI-powered lesson planning and framework analysis
           </Typography>
-          <Card sx={{ p: 2, mb: 2, border: '1px solid', borderColor: 'divider' }}>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: error ? 'error.main' : 'primary.main',
-                textAlign: 'center'
-              }}
-            >
-              Backend: {error || backendMessage}
-            </Typography>
-          </Card>
           <Button
             onClick={handleGoogleLogin}
             variant="contained"
