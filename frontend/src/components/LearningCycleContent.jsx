@@ -115,7 +115,7 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
       }}>
         <Container maxWidth="lg" sx={{ 
           width: '100%',
-          py: 0
+          py: { xs: 2, sm: 3, md: 4 }
         }}>
 
         <Fade in timeout={{ enter: 800, exit: 300 }}>
@@ -135,7 +135,8 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
                 The Teaching & Learning Cycle
               </Typography>
               <Typography variant="h4" component="p" sx={{ 
-                mb: { xs: 0.5, sm: 0.5, md: 0.5 }, 
+                mb: { xs: 2, sm: 3, md: 4 }, 
+                mt: { xs: 1, sm: 1.5, md: 2 },
                 color: 'text.secondary',
                 fontWeight: 300,
                 fontSize: { xs: '1.1rem', sm: '1.5rem', md: '2rem' },
@@ -145,7 +146,7 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
               </Typography>
             </Box>
             
-            <Grid container spacing={{ xs: 2, sm: 3 }} justifyContent="center" sx={{ maxWidth: '100%', mx: 'auto' }}>
+            <Grid container spacing={{ xs: 3, sm: 4, md: 5 }} justifyContent="center" sx={{ maxWidth: '100%', mx: 'auto', mt: { xs: 1, sm: 2, md: 3 } }}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Zoom in timeout={{ enter: 600, exit: 300 }} style={{ transitionDelay: '200ms' }}>
                   <Card sx={{
@@ -198,7 +199,7 @@ const LearningCycleContent = ({ user, onLogout, darkMode, toggleDarkMode, onShow
                       fontSize: { xs: '1.1rem', sm: '1.25rem' },
                       lineHeight: 1.2
                     }}>
-Learn about The Teaching and Learning Cycle
+TLC Explainer
                     </Typography>
                     <Typography variant="body2" sx={{ 
                       color: 'rgba(255, 255, 255, 0.8)',
@@ -207,13 +208,14 @@ Learn about The Teaching and Learning Cycle
                       fontSize: { xs: '0.8rem', sm: '0.9rem' },
                       display: { xs: 'none', sm: 'block' }
                     }}>
-                      Learn what the Teaching and Learning Cycle is and how to implement it
+                      Learn about the Teaching and Learning Cycle
                     </Typography>
                     <Box sx={{
                       width: '60px',
                       height: '3px',
                       background: 'linear-gradient(90deg, #49a2d4, #6bb6e0)',
-                      borderRadius: '2px'
+                      borderRadius: '2px',
+                      mt: { xs: 1.5, sm: 2 }
                     }} />
                   </CardContent>
                   </Card>
@@ -287,7 +289,8 @@ Lesson Planner
                       width: '60px',
                       height: '3px',
                       background: 'linear-gradient(90deg, #49a2d4, #6bb6e0)',
-                      borderRadius: '2px'
+                      borderRadius: '2px',
+                      mt: { xs: 1.5, sm: 2 }
                     }} />
                   </CardContent>
                   </Card>

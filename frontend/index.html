@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -24,7 +24,16 @@
       /* Prevent layout shift during loading */
       #root {
         min-height: 100vh;
+        min-height: 100dvh; /* Dynamic viewport height for mobile */
         background: linear-gradient(135deg, #0a0a0a 0%, #1f2937 50%, #111827 100%);
+      }
+      
+      /* Mobile safe area support */
+      @supports (padding: max(0px)) {
+        #root {
+          padding-left: env(safe-area-inset-left);
+          padding-right: env(safe-area-inset-right);
+        }
       }
     </style>
   </head>
