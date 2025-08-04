@@ -182,27 +182,23 @@ Available topics: ${kb.topics.map(topic => topic.title).join(', ')}`
       });
 
       const anthropicStartTime = Date.now();
-      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Calling Anthropic API`);
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Calling Anthropic API (streaming)`);
       
-      const response = await anthropic.messages.create({
+      const stream = await anthropic.messages.stream({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 800, // Optimized for speed
+        max_tokens: 800,
         messages: messages
       });
 
       const anthropicTime = Date.now() - anthropicStartTime;
-      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Anthropic API time: ${anthropicTime}ms`);
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Anthropic stream initialized: ${anthropicTime}ms`);
       
-      // FAST MODE: Skip analytics tracking for speed
-      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Skipping analytics tracking for performance`);
-      
-      const totalServiceTime = Date.now() - serviceStartTime;
-      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Total service time: ${totalServiceTime}ms`);
-
       return {
         success: true,
-        response: response.content[0].text
+        stream: stream // Return the stream instead of waiting for full response
       };
+      
+      // Stream is returned above, no additional processing needed
     } catch (error) {
       console.error('Framework Learning API Error:', error);
       return {

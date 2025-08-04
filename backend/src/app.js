@@ -182,34 +182,49 @@ app.post('/api/framework-learning', async (req, res) => {
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
     const serviceTime = Date.now() - serviceStart;
     console.log(`[${new Date().toISOString()}] Framework Learning service time: ${serviceTime}ms`);
-    
-    const totalTime = Date.now() - startTime;
-    
-    if (result.success) {
-      console.log(`[${new Date().toISOString()}] Framework Learning total response time: ${totalTime}ms`);
-      // Send response immediately for speed
-      res.json({ response: result.response });
+
+    if (result.success && result.stream) {
+      // Set up Server-Sent Events for streaming
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Headers', 'Cache-Control');
+
+      console.log(`[${new Date().toISOString()}] Framework Learning - Starting stream response`);
       
-      // PERFORMANCE MODE: Skip database operations
-      console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
-      /*
-      // Save messages to database asynchronously (fire-and-forget)
-      if (conversationId && userId) {
-        setImmediate(async () => {
-          try {
-            const dbStart = Date.now();
-            await db.saveMessage(conversationId, 'user', message);
-            await db.saveMessage(conversationId, 'assistant', result.response);
-            console.log(`[${new Date().toISOString()}] Database save time: ${Date.now() - dbStart}ms`);
-          } catch (dbError) {
-            console.error('Error saving messages to database:', dbError);
+      let fullResponse = '';
+      
+      try {
+        for await (const chunk of result.stream) {
+          if (chunk.type === 'content_block_delta' && chunk.delta?.text) {
+            const text = chunk.delta.text;
+            fullResponse += text;
+            
+            // Send chunk to client
+            res.write(`data: ${JSON.stringify({ text, type: 'chunk' })}\n\n`);
           }
-        });
+        }
+        
+        // Send completion signal
+        res.write(`data: ${JSON.stringify({ type: 'complete' })}\n\n`);
+        res.end();
+        
+        const totalTime = Date.now() - startTime;
+        console.log(`[${new Date().toISOString()}] Framework Learning streaming complete: ${totalTime}ms`);
+        
+        // PERFORMANCE MODE: Skip database operations
+        console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
+        
+      } catch (streamError) {
+        console.error('Streaming error:', streamError);
+        res.write(`data: ${JSON.stringify({ type: 'error', error: 'Stream interrupted' })}\n\n`);
+        res.end();
       }
-      */
     } else {
+      const totalTime = Date.now() - startTime;
       console.log(`[${new Date().toISOString()}] Framework Learning error response time: ${totalTime}ms`);
-      res.status(500).json({ error: result.error });
+      res.status(500).json({ error: result.error || 'Service error' });
     }
   } catch (error) {
     const totalTime = Date.now() - startTime;

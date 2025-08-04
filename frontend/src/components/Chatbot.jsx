@@ -148,6 +148,69 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  const handleStreamingResponse = async (endpoint, requestData) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantMessage = { role: 'assistant', content: '' };
+      
+      // Add empty assistant message that we'll update
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsLoading(false);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'chunk' && data.text) {
+                assistantMessage.content += data.text;
+                setMessages(prev => [
+                  ...prev.slice(0, -1), // Remove last message
+                  { ...assistantMessage } // Add updated message
+                ]);
+              } else if (data.type === 'complete') {
+                console.log('Streaming complete');
+                return;
+              } else if (data.type === 'error') {
+                throw new Error(data.error || 'Stream error');
+              }
+            } catch (parseError) {
+              console.error('Error parsing stream data:', parseError);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, there was an error processing your request. Please try again.' 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
 
@@ -166,6 +229,21 @@ const Chatbot = ({ type, title, description, user, onClose }) => {
 
     try {
       const endpoint = type === 'framework' ? '/api/framework-learning' : '/api/lesson-planner';
+      
+      // Handle streaming for framework learning
+      if (type === 'framework') {
+        await handleStreamingResponse(endpoint, {
+          message: messageToSend,
+          conversationHistory: messages,
+          conversationId: conversationId,
+          userId: user?.uid,
+          userEmail: user?.email,
+          userName: user?.displayName
+        });
+        return;
+      }
+      
+      // Non-streaming for lesson planner (for now)
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
