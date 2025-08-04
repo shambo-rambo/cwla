@@ -56,6 +56,9 @@ class FrameworkLearningService {
   }
 
   async generateFrameworkResponse(userInput, conversationHistory = [], userId = 'anonymous') {
+    const serviceStartTime = Date.now();
+    console.log(`[${new Date().toISOString()}] FrameworkLearningService - generateFrameworkResponse started`);
+    
     try {
       if (!this.knowledgeBase) {
         return {
@@ -116,6 +119,12 @@ IMPORTANT: You must include the clickable markdown link exactly as shown above. 
         };
       }
 
+      // ========== FAST MODE - SKIP HEAVY PROCESSING FOR SPEED ==========
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Using fast mode, skipping heavy AI processing`);
+      
+      // Skip complex user modeling and contextual engines for speed
+      // TODO: Re-enable after performance optimization
+      /*
       // ========== PHASE 3 USER MODELING INTEGRATION ==========
       
       // Get personalized context from user modeling
@@ -136,160 +145,30 @@ IMPORTANT: You must include the clickable markdown link exactly as shown above. 
       };
       
       const responseStrategy = this.contextualEngine.determineResponseStrategy(userInput, conversationHistory, enhancedContext);
+      */
       
-      // 2. Predictive Learning Analysis
-      const predictiveAnalysis = await this.predictiveEngine.predictNextNeed(
-        conversationHistory, 
-        userInput, 
-        {
-          subject: this.extractSubjectFromContext(conversationHistory),
-          expertiseLevel: responseStrategy.contextAnalysis.expertiseLevel,
-          challenges: responseStrategy.contextAnalysis.detectedChallenges?.map(c => c.challenge) || []
-        }
-      );
-      
-      // 3. Conversation Flow Guidance
-      const flowGuidance = this.flowIntelligence.guideConversationFlow(
-        { lastUserInput: userInput },
-        { primary: responseStrategy.contextAnalysis.userIntent },
-        conversationHistory,
-        userInput
-      );
-      
-      // 4. Intelligent Knowledge Retrieval
-      const intelligentRecommendations = unifiedKnowledge.getIntelligentRecommendations(userInput, {
-        subject: this.extractSubjectFromContext(conversationHistory),
-        challenges: responseStrategy.contextAnalysis.detectedChallenges?.map(c => c.challenge) || [],
-        expertiseLevel: responseStrategy.contextAnalysis.expertiseLevel
-      });
-      
-      // 5. Adaptive Response Configuration
-      const adaptationGuidelines = this.contextualEngine.getResponseAdaptationGuidelines(responseStrategy.strategy);
-      const adaptiveConfig = this.adaptiveEngine.calibrateResponseComplexity(
-        {
-          expertiseLevel: responseStrategy.contextAnalysis.expertiseLevel,
-          subject: this.extractSubjectFromContext(conversationHistory)
-        },
-        {
-          depth: responseStrategy.contextAnalysis.conversationContext?.depth,
-          userIntent: responseStrategy.contextAnalysis.userIntent,
-          lastUserMessage: userInput
-        },
-        'response_content_placeholder'
-      );
+      // FAST MODE: Skip heavy AI processing engines
+      // Get basic knowledge recommendations directly
+      const basicRecommendations = unifiedKnowledge.getKnowledgeForFrameworkLearning();
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Retrieved basic knowledge recommendations`);
 
-      // ========== ENHANCED AI PROMPT WITH PHASE 2+3 INTELLIGENCE ==========
+      // ========== SIMPLIFIED FAST PROMPT ==========
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Building simplified prompt`);
       
-      const prompt = `You are a TLC framework expert with advanced intelligence and personalized learning capabilities. Use ALL the intelligence data below to provide the most relevant, perfectly adapted response.
+      const prompt = `You are a professional TLC (Teaching and Learning Cycle) framework expert. Provide direct, concise help to primary teachers.
 
 Teacher's question: "${userInput}"
 
-**PERSONALIZED USER CONTEXT:**
-${personalizedContext.conversationHistory !== 'none' ? `
-User Profile:
-- Expertise Level: ${personalizedContext.expertiseLevel}
-- Learning Style: ${personalizedContext.preferredLearningStyle}
-- Subject Context: ${personalizedContext.subjectContext}
-- Teaching Level: ${personalizedContext.teachingLevel}
-- Known Topics: ${personalizedContext.knownTopics.join(', ') || 'None yet'}
-- Learning Velocity: ${personalizedContext.learningVelocity.toFixed(2)}
 
-Cross-Conversation Memory:
-${crossConversationContext.available ? `
-- Previous conversations: ${crossConversationContext.context.length}
-- Continuity: ${crossConversationContext.continuity}
-- Unresolved topics: ${crossConversationContext.context.map(c => c.unresolved).filter(u => u.length > 0).join(', ') || 'None'}
-` : 'No previous context available'}
+**RESPONSE GUIDELINES:**
+- Be professional, direct, and concise
+- NO emojis or overly casual language
+- Focus on practical TLC implementation
+- Use British spelling
+- Ask 1-2 strategic questions if helpful
+- Use markdown **bold** for key points
 
-Personalized Recommendations:
-- Optimal content type: ${personalizedRecommendations.recommendations?.contentType || 'mixed'}
-- Suggested interaction style: ${personalizedRecommendations.recommendations?.interactionStyle || 'supportive'}
-- Recommended difficulty: ${personalizedRecommendations.recommendations?.difficultyLevel || 'adaptive'}
-` : 'New user - no personalization data available yet'}
-
-**INTELLIGENT CONTEXT ANALYSIS:**
-- Detected expertise level: ${responseStrategy.contextAnalysis.expertiseLevel}
-- Response strategy: ${responseStrategy.strategyDetails.name}
-- Strategy reasoning: ${responseStrategy.reasoning}
-- User intent: ${responseStrategy.contextAnalysis.userIntent}
-- Detected challenges: ${responseStrategy.contextAnalysis.detectedChallenges?.map(c => c.challenge).join(', ') || 'none'}
-
-**PREDICTIVE LEARNING ANALYSIS:**
-${predictiveAnalysis.predictedNeeds.length > 0 ? `
-User's next likely needs:
-${predictiveAnalysis.predictedNeeds.slice(0, 3).map(need => 
-  `- ${need.type} (confidence: ${(need.confidence * 100).toFixed(0)}%) - ${need.reasoning}`
-).join('\n')}
-
-Proactive suggestions:
-${predictiveAnalysis.proactiveSuggestions.slice(0, 2).map(suggestion => 
-  `- ${suggestion.suggestion}`
-).join('\n')}
-
-Learning stage: ${predictiveAnalysis.currentStage.stage}
-` : 'No specific predictive insights available.'}
-
-**CONVERSATION FLOW GUIDANCE:**
-${flowGuidance.detectedFlow ? `
-Detected learning flow: ${flowGuidance.detectedFlow.flowName}
-Flow confidence: ${(flowGuidance.flowConfidence * 100).toFixed(0)}%
-Current progress: ${(flowGuidance.progressAssessment.progress * 100).toFixed(0)}% complete
-Next step: ${flowGuidance.nextStepGuidance.action}
-Navigation guidance: ${flowGuidance.navigationGuidance.shouldRedirect ? `Suggest ${flowGuidance.navigationGuidance.redirectTarget}` : 'Continue current conversation'}
-` : 'No specific flow detected - help establish learning goals.'}
-
-**INTELLIGENT KNOWLEDGE RECOMMENDATIONS:**
-${intelligentRecommendations.topics.length > 0 ? `
-Most relevant topics (confidence: ${(intelligentRecommendations.confidence * 100).toFixed(0)}%):
-${intelligentRecommendations.topics.map(topic => `- ${topic.title} (relevance: ${topic.relevanceScore?.toFixed(1)})`).join('\n')}
-
-Key insights: ${intelligentRecommendations.reasoning}
-` : 'No specific topic recommendations available.'}
-
-**ADAPTIVE RESPONSE CONFIGURATION:**
-- Response complexity: ${adaptiveConfig.complexityLevel}
-- Optimal terminology: ${adaptationGuidelines.terminology}
-- Response length: ${adaptationGuidelines.responseLength}
-- Structure style: ${adaptationGuidelines.structureStyle}
-- Interaction style: ${adaptationGuidelines.interactionStyle}
-- Adaptation confidence: ${(adaptiveConfig.adaptationMetadata.adaptationConfidence * 100).toFixed(0)}%
-
-**YOUR INTELLIGENT PERSONALITY:**
-${this.getPersonalityGuidelines(responseStrategy.strategy, adaptationGuidelines)}
-
-**CONVERSATION FLOW INTELLIGENCE:**
-${flowGuidance.conversationHealth.status === 'stuck' ? '- User seems confused - provide clearer, simpler explanation' : ''}
-${flowGuidance.conversationHealth.status === 'ready_to_progress' ? '- User is ready to advance - offer next level concepts' : ''}
-${flowGuidance.nextStepGuidance.action === 'progress_to_next_stage' ? `- Guide toward: ${flowGuidance.nextStepGuidance.nextStage?.name}` : ''}
-${predictiveAnalysis.recommendations.length > 0 ? `- Navigation tips: ${predictiveAnalysis.recommendations.join(', ')}` : ''}
-
-**ADAPTIVE CONVERSATION STYLE:**
-- Use British spelling (realise, colour, organised, centre, analyse)
-- Complexity: ${adaptiveConfig.complexityLevel} level (adapt vocabulary and examples accordingly)
-- ${adaptationGuidelines.responseLength === 'detailed' ? 'Provide comprehensive explanations with examples' : 'Keep responses focused and practical'}
-- ${adaptationGuidelines.interactionStyle.includes('encouraging') ? 'Be patient and encouraging' : 'Be direct and solution-focused'}
-- Flow health: ${flowGuidance.conversationHealth.status} - ${flowGuidance.conversationHealth.recommendations.join(' ')}
-
-
-**AVAILABLE TOPICS:** ${kb.topics.map(topic => topic.title).join(', ')}
-
-**STRATEGIC TLC QUESTIONING GUIDANCE:**
-When users ask general questions about TLC implementation, ask 2-3 strategic follow-up questions to provide more targeted help:
-- "What subject area are you planning to use TLC with?"
-- "Which TLC stage do you find most challenging - Field Building, Modeling, Joint Construction, or Independent Construction?"
-- "Are you new to TLC, or do you have some experience already?"
-- "What specific classroom challenges are you hoping TLC will help you address?"
-- "Do you have students with diverse learning needs (EAL/D, learning support, advanced learners)?"
-
-**INTELLIGENCE INTEGRATION INSTRUCTIONS:**
-1. Use the predictive analysis to anticipate and address the user's next needs proactively
-2. Follow the conversation flow guidance to keep the discussion productive and goal-oriented
-3. Apply the adaptive response configuration to match the user's comprehension level perfectly
-4. Reference relevant knowledge recommendations to provide the most accurate information
-5. Ask strategic questions to provide more targeted TLC implementation guidance
-6. If conversation flow suggests redirection, mention it naturally: "${flowGuidance.navigationGuidance.shouldRedirect ? `You might find the ${flowGuidance.navigationGuidance.redirectTarget === 'lesson_planner' ? 'lesson planner' : 'other tools'} helpful for this.` : ''}"
-
-Respond using ALL the intelligence data above. Use markdown formatting with **bold** for key points. This is your most intelligent response possible.`
+Available topics: ${kb.topics.map(topic => topic.title).join(', ')}`
 
       // Build messages array with conversation history + system prompt
       const messages = conversationHistory.map(msg => ({
@@ -302,7 +181,8 @@ Respond using ALL the intelligence data above. Use markdown formatting with **bo
         content: prompt
       });
 
-      const startTime = Date.now();
+      const anthropicStartTime = Date.now();
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Calling Anthropic API`);
       
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-20250514',
@@ -310,87 +190,18 @@ Respond using ALL the intelligence data above. Use markdown formatting with **bo
         messages: messages
       });
 
-      const responseTime = Date.now() - startTime;
+      const anthropicTime = Date.now() - anthropicStartTime;
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Anthropic API time: ${anthropicTime}ms`);
       
-      // Track conversation analytics
-      const conversationData = {
-        id: `framework_${Date.now()}`,
-        history: conversationHistory,
-        userId: userId
-      };
+      // FAST MODE: Skip analytics tracking for speed
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Skipping analytics tracking for performance`);
       
-      const analyticsResult = this.analyticsEngine.trackConversation(
-        conversationData,
-        userInput,
-        {
-          response: response.content[0].text,
-          responseTime,
-          strategy: responseStrategy.strategy,
-          intelligence: {
-            predictive: predictiveAnalysis.confidence,
-            adaptive: adaptiveConfig.adaptationMetadata.adaptationConfidence,
-            contextual: responseStrategy.confidence,
-            flow: flowGuidance.flowConfidence
-          }
-        },
-        {
-          userId: conversationData.userId,
-          responseStrategy: responseStrategy.strategy,
-          intelligenceData: {
-            contextAnalysis: responseStrategy.contextAnalysis,
-            predictiveNeeds: predictiveAnalysis.predictedNeeds?.length || 0,
-            flowDetected: !!flowGuidance.detectedFlow,
-            adaptationLevel: adaptiveConfig.complexityLevel
-          }
-        }
-      );
-
-      // Update user model with conversation data
-      const userModelUpdate = this.userModelingEngine.updateUserModel(
-        userId,
-        conversationData,
-        userInput,
-        {
-          response: response.content[0].text,
-          responseTime,
-          strategy: responseStrategy.strategy,
-          intelligence: {
-            predictive: predictiveAnalysis.confidence,
-            adaptive: adaptiveConfig.adaptationMetadata.adaptationConfidence,
-            contextual: responseStrategy.confidence,
-            flow: flowGuidance.flowConfidence
-          }
-        },
-        {
-          userId: userId,
-          responseStrategy: responseStrategy.strategy,
-          intelligenceData: {
-            contextAnalysis: responseStrategy.contextAnalysis,
-            predictiveNeeds: predictiveAnalysis.predictedNeeds?.length || 0,
-            flowDetected: !!flowGuidance.detectedFlow,
-            adaptationLevel: adaptiveConfig.complexityLevel
-          }
-        }
-      );
+      const totalServiceTime = Date.now() - serviceStartTime;
+      console.log(`[${new Date().toISOString()}] FrameworkLearningService - Total service time: ${totalServiceTime}ms`);
 
       return {
         success: true,
-        response: response.content[0].text,
-        analytics: analyticsResult.analytics,
-        insights: analyticsResult.insights,
-        responseTime,
-        intelligence: {
-          strategy: responseStrategy.strategy,
-          confidence: responseStrategy.confidence,
-          adaptation: adaptiveConfig.complexityLevel,
-          flow: flowGuidance.detectedFlow?.flowName || 'none'
-        },
-        personalization: {
-          userModelUpdated: userModelUpdate.success,
-          personalizedContext: personalizedContext,
-          crossConversationInsights: crossConversationContext.available ? crossConversationContext.context.length : 0,
-          userInsights: userModelUpdate.userInsights || []
-        }
+        response: response.content[0].text
       };
     } catch (error) {
       console.error('Framework Learning API Error:', error);
