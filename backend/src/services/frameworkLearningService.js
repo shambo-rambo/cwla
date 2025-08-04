@@ -85,21 +85,21 @@ class FrameworkLearningService {
         
         messages.push({
           role: 'user',
-          content: `You're a helpful TLC framework expert. The teacher asked: "${userInput}"
+          content: `You are a TLC framework expert. The teacher asked: "${userInput}"
 
-They want lesson plans or activities, but you're the framework expert, not the lesson planner. Respond directly but helpfully.
+They want lesson plans or activities, but you provide framework guidance, not lesson planning. Respond directly and professionally.
 
 ${relevantKnowledge ? `
 **RELEVANT TLC KNOWLEDGE TO MENTION:**
 ${relevantKnowledge}
 ` : ''}
 
-Keep it concise and helpful (under 150 words):
+Provide a concise response (under 150 words):
 - Briefly acknowledge what they're looking for
 - Share 1-2 quick TLC tips relevant to their request based on the knowledge above
 - Always include this exact redirect with link: "For detailed lesson plans implementing these strategies, **[click here to open the lesson planner](https://cwla-52a1d.web.app/?open=lesson-planner)**."
 - Mention that the lesson planner now uses the same TLC knowledge base for consistent, research-based lessons
-- Be friendly but direct
+- Be direct and professional
 
 IMPORTANT: You must include the clickable markdown link exactly as shown above. Use markdown **bold** for key points. No rambling or overly personal tone.`
         });
@@ -180,7 +180,7 @@ IMPORTANT: You must include the clickable markdown link exactly as shown above. 
 
       // ========== ENHANCED AI PROMPT WITH PHASE 2+3 INTELLIGENCE ==========
       
-      const prompt = `You are a helpful TLC framework expert with advanced intelligence and personalized learning capabilities. Use ALL the intelligence data below to provide the most relevant, perfectly adapted response.
+      const prompt = `You are a TLC framework expert with advanced intelligence and personalized learning capabilities. Use ALL the intelligence data below to provide the most relevant, perfectly adapted response.
 
 Teacher's question: "${userInput}"
 
@@ -421,10 +421,10 @@ Respond using ALL the intelligence data above. Use markdown formatting with **bo
   getPersonalityGuidelines(strategy, adaptationGuidelines) {
     const personalityMap = {
       foundational_guidance: `
-- Be patient and encouraging - this teacher is learning TLC concepts
+- Be professional and supportive - this teacher is learning TLC concepts
 - Provide detailed explanations with clear examples
 - Use simple, accessible language
-- Offer reassurance and scaffolded learning paths`,
+- Offer guidance and scaffolded learning paths`,
       
       targeted_troubleshooting: `
 - Be direct and solution-focused

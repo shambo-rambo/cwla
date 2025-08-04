@@ -221,7 +221,7 @@ I want to create a comprehensive TLC lesson plan, but I need more details to mak
 <li><strong>Practical Constraints:</strong> Lesson duration? Available resources? Any classroom challenges or constraints I should know about?</li>
 </ol>
 
-<p>Format as friendly, specific questions that show understanding of their request and TLC pedagogy. ${responseStrategy.tone === 'encouraging' ? 'Be supportive and encouraging.' : 'Be direct and solution-focused.'}</p>`
+<p>Format as professional, specific questions that show understanding of their request and TLC pedagogy. ${responseStrategy.tone === 'encouraging' ? 'Be professional and supportive.' : 'Be direct and solution-focused.'}</p>`
       });
 
       const response = await anthropic.messages.create({

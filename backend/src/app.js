@@ -39,6 +39,7 @@ app.get('/health', (req, res) => {
 
 // Framework Analysis Chatbot
 app.post('/api/framework-analysis', async (req, res) => {
+  const start = Date.now();
   try {
     const { message } = req.body;
     
@@ -49,11 +50,14 @@ app.post('/api/framework-analysis', async (req, res) => {
     const result = await anthropicService.generateFrameworkAnalysis(message);
     
     if (result.success) {
+      console.log('Framework analysis response time:', Date.now() - start, 'ms');
       res.json({ response: result.response });
     } else {
+      console.log('Framework analysis error response time:', Date.now() - start, 'ms');
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
+    console.log('Framework analysis error response time:', Date.now() - start, 'ms');
     console.error('Framework analysis error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -61,6 +65,7 @@ app.post('/api/framework-analysis', async (req, res) => {
 
 // Lesson Planner Chatbot
 app.post('/api/lesson-planner', async (req, res) => {
+  const start = Date.now();
   try {
     const { message, conversationHistory = [], conversationId, userId, userEmail, userName } = req.body;
     
@@ -86,6 +91,7 @@ app.post('/api/lesson-planner', async (req, res) => {
     }
 
     const result = await anthropicService.generateLessonPlan(message, conversationHistory);
+    console.log('Lesson planner response time:', Date.now() - start, 'ms');
     
     if (result.success) {
       // Send response immediately for speed
@@ -103,9 +109,11 @@ app.post('/api/lesson-planner', async (req, res) => {
         });
       }
     } else {
+      console.log('Lesson planner error response time:', Date.now() - start, 'ms');
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
+    console.log('Lesson planner error response time:', Date.now() - start, 'ms');
     console.error('Lesson planner error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -113,6 +121,7 @@ app.post('/api/lesson-planner', async (req, res) => {
 
 // Framework Learning Chatbot (Enhanced with Knowledge Base)
 app.post('/api/framework-learning', async (req, res) => {
+  const start = Date.now();
   try {
     const { message, conversationHistory = [], conversationId, userId, userEmail, userName } = req.body;
     
@@ -138,6 +147,7 @@ app.post('/api/framework-learning', async (req, res) => {
     }
 
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
+    console.log('Framework learning response time:', Date.now() - start, 'ms');
     
     if (result.success) {
       // Send response immediately for speed
@@ -155,9 +165,11 @@ app.post('/api/framework-learning', async (req, res) => {
         });
       }
     } else {
+      console.log('Framework learning error response time:', Date.now() - start, 'ms');
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
+    console.log('Framework learning error response time:', Date.now() - start, 'ms');
     console.error('Framework learning error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
