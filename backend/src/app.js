@@ -39,7 +39,9 @@ app.get('/health', (req, res) => {
 
 // Framework Analysis Chatbot
 app.post('/api/framework-analysis', async (req, res) => {
-  const start = Date.now();
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Framework Analysis request received`);
+  
   try {
     const { message } = req.body;
     
@@ -47,17 +49,23 @@ app.post('/api/framework-analysis', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    const serviceStart = Date.now();
     const result = await anthropicService.generateFrameworkAnalysis(message);
+    const serviceTime = Date.now() - serviceStart;
+    console.log(`[${new Date().toISOString()}] Framework Analysis service time: ${serviceTime}ms`);
+    
+    const totalTime = Date.now() - startTime;
     
     if (result.success) {
-      console.log('Framework analysis response time:', Date.now() - start, 'ms');
+      console.log(`[${new Date().toISOString()}] Framework Analysis total response time: ${totalTime}ms`);
       res.json({ response: result.response });
     } else {
-      console.log('Framework analysis error response time:', Date.now() - start, 'ms');
+      console.log(`[${new Date().toISOString()}] Framework Analysis error response time: ${totalTime}ms`);
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    console.log('Framework analysis error response time:', Date.now() - start, 'ms');
+    const totalTime = Date.now() - startTime;
+    console.log(`[${new Date().toISOString()}] Framework Analysis error response time: ${totalTime}ms`);
     console.error('Framework analysis error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -65,7 +73,9 @@ app.post('/api/framework-analysis', async (req, res) => {
 
 // Lesson Planner Chatbot
 app.post('/api/lesson-planner', async (req, res) => {
-  const start = Date.now();
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Lesson Planner request received`);
+  
   try {
     const { message, conversationHistory = [], conversationId, userId, userEmail, userName } = req.body;
     
@@ -76,7 +86,9 @@ app.post('/api/lesson-planner', async (req, res) => {
     // Check chat limits if user info provided (skip in development for speed)
     if (userId && conversationId && process.env.NODE_ENV === 'production') {
       try {
+        const limitStart = Date.now();
         const limitCheck = await db.checkChatLimits(userId, 'lesson', conversationId);
+        console.log(`[${new Date().toISOString()}] Chat limit check time: ${Date.now() - limitStart}ms`);
         if (limitCheck.exceedsLimit) {
           return res.json({ 
             response: limitCheck.message,
@@ -90,30 +102,42 @@ app.post('/api/lesson-planner', async (req, res) => {
       }
     }
 
+    const serviceStart = Date.now();
     const result = await anthropicService.generateLessonPlan(message, conversationHistory);
-    console.log('Lesson planner response time:', Date.now() - start, 'ms');
+    const serviceTime = Date.now() - serviceStart;
+    console.log(`[${new Date().toISOString()}] Lesson Planner service time: ${serviceTime}ms`);
+    
+    const totalTime = Date.now() - startTime;
     
     if (result.success) {
+      console.log(`[${new Date().toISOString()}] Lesson Planner total response time: ${totalTime}ms`);
       // Send response immediately for speed
       res.json({ response: result.response });
       
+      // PERFORMANCE MODE: Skip database operations
+      console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
+      /*
       // Save messages to database asynchronously (fire-and-forget)
       if (conversationId && userId) {
         setImmediate(async () => {
           try {
+            const dbStart = Date.now();
             await db.saveMessage(conversationId, 'user', message);
             await db.saveMessage(conversationId, 'assistant', result.response);
+            console.log(`[${new Date().toISOString()}] Database save time: ${Date.now() - dbStart}ms`);
           } catch (dbError) {
             console.error('Error saving messages to database:', dbError);
           }
         });
       }
+      */
     } else {
-      console.log('Lesson planner error response time:', Date.now() - start, 'ms');
+      console.log(`[${new Date().toISOString()}] Lesson Planner error response time: ${totalTime}ms`);
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    console.log('Lesson planner error response time:', Date.now() - start, 'ms');
+    const totalTime = Date.now() - startTime;
+    console.log(`[${new Date().toISOString()}] Lesson Planner error response time: ${totalTime}ms`);
     console.error('Lesson planner error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -121,7 +145,9 @@ app.post('/api/lesson-planner', async (req, res) => {
 
 // Framework Learning Chatbot (Enhanced with Knowledge Base)
 app.post('/api/framework-learning', async (req, res) => {
-  const start = Date.now();
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Framework Learning request received`);
+  
   try {
     const { message, conversationHistory = [], conversationId, userId, userEmail, userName } = req.body;
     
@@ -129,10 +155,15 @@ app.post('/api/framework-learning', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    // PERFORMANCE MODE: Skip database operations for speed testing
+    console.log(`[${new Date().toISOString()}] Skipping chat limits check for performance testing`);
+    /*
     // Check chat limits if user info provided (skip in development for speed)
     if (userId && conversationId && process.env.NODE_ENV === 'production') {
       try {
+        const limitStart = Date.now();
         const limitCheck = await db.checkChatLimits(userId, 'framework', conversationId);
+        console.log(`[${new Date().toISOString()}] Chat limit check time: ${Date.now() - limitStart}ms`);
         if (limitCheck.exceedsLimit) {
           return res.json({ 
             response: limitCheck.message,
@@ -145,31 +176,44 @@ app.post('/api/framework-learning', async (req, res) => {
         // Continue without limit check if it fails
       }
     }
+    */
 
+    const serviceStart = Date.now();
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
-    console.log('Framework learning response time:', Date.now() - start, 'ms');
+    const serviceTime = Date.now() - serviceStart;
+    console.log(`[${new Date().toISOString()}] Framework Learning service time: ${serviceTime}ms`);
+    
+    const totalTime = Date.now() - startTime;
     
     if (result.success) {
+      console.log(`[${new Date().toISOString()}] Framework Learning total response time: ${totalTime}ms`);
       // Send response immediately for speed
       res.json({ response: result.response });
       
+      // PERFORMANCE MODE: Skip database operations
+      console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
+      /*
       // Save messages to database asynchronously (fire-and-forget)
       if (conversationId && userId) {
         setImmediate(async () => {
           try {
+            const dbStart = Date.now();
             await db.saveMessage(conversationId, 'user', message);
             await db.saveMessage(conversationId, 'assistant', result.response);
+            console.log(`[${new Date().toISOString()}] Database save time: ${Date.now() - dbStart}ms`);
           } catch (dbError) {
             console.error('Error saving messages to database:', dbError);
           }
         });
       }
+      */
     } else {
-      console.log('Framework learning error response time:', Date.now() - start, 'ms');
+      console.log(`[${new Date().toISOString()}] Framework Learning error response time: ${totalTime}ms`);
       res.status(500).json({ error: result.error });
     }
   } catch (error) {
-    console.log('Framework learning error response time:', Date.now() - start, 'ms');
+    const totalTime = Date.now() - startTime;
+    console.log(`[${new Date().toISOString()}] Framework Learning error response time: ${totalTime}ms`);
     console.error('Framework learning error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

@@ -1,0 +1,52 @@
+.
+├── CLAUDE.md
+├── FRAMEWORK_OPT.md
+├── INTELLIGENCE_ENHANCEMENT_PLAN.md
+├── backend
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── railway.json
+│   └── src
+│       ├── app.js
+│       ├── data
+│       │   └── framework-knowledge.json
+│       └── services
+│           ├── adaptiveResponseEngine.js
+│           ├── anthropicService.js
+│           ├── contextualResponseEngine.js
+│           ├── conversationFlowIntelligence.js
+│           ├── database.js
+│           ├── frameworkLearningService.js
+│           ├── intelligentKnowledgeIndex.js
+│           ├── knowledgeRelationshipMapper.js
+│           ├── learningAnalyticsEngine.js
+│           ├── lessonCreationService.js
+│           ├── predictiveLearningEngine.js
+│           ├── unifiedKnowledgeService.js
+│           └── userModelingEngine.js
+├── frontend
+│   ├── firebase.json
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   └── logo.png
+│   ├── src
+│   │   ├── App.jsx
+│   │   ├── components
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── ChatHeader.jsx
+│   │   │   ├── ChatInput.jsx
+│   │   │   ├── ChatMessages.jsx
+│   │   │   ├── Chatbot.jsx
+│   │   │   ├── ConversationSidebar.jsx
+│   │   │   └── LearningCycleContent.jsx
+│   │   ├── firebase.js
+│   │   ├── main.jsx
+│   │   └── theme.js
+│   └── vite.config.js
+├── nixpacks.toml
+├── project-tree.txt
+└── updates.md
+
+9 directories, 41 files
