@@ -2,6 +2,12 @@ const { Pool } = require('pg');
 
 class DatabaseService {
   constructor() {
+    if (!process.env.DATABASE_URL) {
+      console.log('No DATABASE_URL found - running without database functionality');
+      this.pool = null;
+      return;
+    }
+    
     this.pool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
@@ -11,6 +17,7 @@ class DatabaseService {
   }
 
   async initializeTables() {
+    if (!this.pool) return;
     try {
       // Create conversations table
       await this.pool.query(`
@@ -51,6 +58,7 @@ class DatabaseService {
   }
 
   async saveConversation(userId, userEmail, userName, chatType, title = null) {
+    if (!this.pool) return null;
     try {
       const result = await this.pool.query(
         `INSERT INTO conversations (user_id, user_email, user_name, chat_type, title) 
@@ -65,6 +73,7 @@ class DatabaseService {
   }
 
   async saveMessage(conversationId, role, content) {
+    if (!this.pool) return;
     try {
       await this.pool.query(
         `INSERT INTO messages (conversation_id, role, content) VALUES ($1, $2, $3)`,
@@ -77,6 +86,7 @@ class DatabaseService {
   }
 
   async getConversationHistory(conversationId) {
+    if (!this.pool) return [];
     try {
       const result = await this.pool.query(
         `SELECT role, content, created_at FROM messages 
@@ -91,6 +101,7 @@ class DatabaseService {
   }
 
   async getUserConversations(userId, limit = 50) {
+    if (!this.pool) return [];
     try {
       const result = await this.pool.query(
         `SELECT c.id, c.chat_type, c.title, c.created_at, c.updated_at,
@@ -111,6 +122,7 @@ class DatabaseService {
   }
 
   async updateConversationTitle(conversationId, title) {
+    if (!this.pool) return;
     try {
       await this.pool.query(
         `UPDATE conversations SET title = $1, updated_at = CURRENT_TIMESTAMP 
@@ -124,6 +136,7 @@ class DatabaseService {
   }
 
   async deleteConversation(conversationId, userId) {
+    if (!this.pool) return;
     try {
       await this.pool.query(
         `DELETE FROM conversations WHERE id = $1 AND user_id = $2`,
@@ -136,6 +149,7 @@ class DatabaseService {
   }
 
   async getAllConversationsForAdmin(limit = 100, offset = 0) {
+    if (!this.pool) return [];
     try {
       const result = await this.pool.query(
         `SELECT c.id, c.user_id, c.user_email, c.user_name, c.chat_type, 
@@ -156,6 +170,7 @@ class DatabaseService {
   }
 
   async getConversationMessageCount(conversationId) {
+    if (!this.pool) return 0;
     try {
       const result = await this.pool.query(
         `SELECT COUNT(*) as count FROM messages WHERE conversation_id = $1`,
@@ -169,6 +184,7 @@ class DatabaseService {
   }
 
   async getUserChatCount(userId, chatType) {
+    if (!this.pool) return 0;
     try {
       const result = await this.pool.query(
         `SELECT COUNT(*) as count FROM conversations 
@@ -183,6 +199,7 @@ class DatabaseService {
   }
 
   async checkChatLimits(userId, chatType, conversationId = null) {
+    if (!this.pool) return { exceedsLimit: false };
     try {
       // Get user email to check for admin exemption
       const userResult = await this.pool.query(
@@ -227,7 +244,9 @@ class DatabaseService {
   }
 
   async close() {
-    await this.pool.end();
+    if (this.pool) {
+      await this.pool.end();
+    }
   }
 }
 
