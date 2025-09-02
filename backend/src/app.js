@@ -30,7 +30,7 @@ app.use(express.json());
 app.options('*', cors());
 
 app.get('/', (req, res) => {
-  
+  res.json({ status: 'OK', service: 'Teaching Cycle Backend', timestamp: new Date().toISOString() });
 });
 
 app.get('/health', (req, res) => {
@@ -114,9 +114,6 @@ app.post('/api/lesson-planner', async (req, res) => {
       // Send response immediately for speed
       res.json({ response: result.response });
       
-      // PERFORMANCE MODE: Skip database operations
-      console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
-      /*
       // Save messages to database asynchronously (fire-and-forget)
       if (conversationId && userId) {
         setImmediate(async () => {
@@ -130,7 +127,6 @@ app.post('/api/lesson-planner', async (req, res) => {
           }
         });
       }
-      */
     } else {
       console.log(`[${new Date().toISOString()}] Lesson Planner error response time: ${totalTime}ms`);
       res.status(500).json({ error: result.error });
@@ -155,9 +151,6 @@ app.post('/api/framework-learning', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // PERFORMANCE MODE: Skip database operations for speed testing
-    console.log(`[${new Date().toISOString()}] Skipping chat limits check for performance testing`);
-    /*
     // Check chat limits if user info provided (skip in development for speed)
     if (userId && conversationId && process.env.NODE_ENV === 'production') {
       try {
@@ -176,7 +169,6 @@ app.post('/api/framework-learning', async (req, res) => {
         // Continue without limit check if it fails
       }
     }
-    */
 
     const serviceStart = Date.now();
     const result = await frameworkLearningService.generateFrameworkResponse(message, conversationHistory);
@@ -213,8 +205,19 @@ app.post('/api/framework-learning', async (req, res) => {
         const totalTime = Date.now() - startTime;
         console.log(`[${new Date().toISOString()}] Framework Learning streaming complete: ${totalTime}ms`);
         
-        // PERFORMANCE MODE: Skip database operations
-        console.log(`[${new Date().toISOString()}] Skipping database save for performance testing`);
+        // Save messages to database asynchronously (fire-and-forget)
+        if (conversationId && userId) {
+          setImmediate(async () => {
+            try {
+              const dbStart = Date.now();
+              await db.saveMessage(conversationId, 'user', message);
+              await db.saveMessage(conversationId, 'assistant', fullResponse);
+              console.log(`[${new Date().toISOString()}] Database save time: ${Date.now() - dbStart}ms`);
+            } catch (dbError) {
+              console.error('Error saving messages to database:', dbError);
+            }
+          });
+        }
         
       } catch (streamError) {
         console.error('Streaming error:', streamError);
