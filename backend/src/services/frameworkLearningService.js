@@ -88,23 +88,22 @@ class FrameworkLearningService {
         
         messages.push({
           role: 'user',
-          content: `You are a TLC framework expert. The teacher asked: "${userInput}"
+          content: `You are a TLC framework expert based on Beverly Derewianka's research. The teacher asked: "${userInput}"
 
-They want lesson plans or activities, but you provide framework guidance, not lesson planning. Respond directly and professionally.
+They want lesson plans/activities, but you provide TLC framework guidance. CRITICAL: TLC has exactly 5 stages (Building Field → Supported Reading → Learning Genre → Supported Writing → Independent Writing) and focuses on improving WRITING across curriculum areas.
 
 ${relevantKnowledge ? `
-**RELEVANT TLC KNOWLEDGE TO MENTION:**
+**RELEVANT TLC KNOWLEDGE:**
 ${relevantKnowledge}
 ` : ''}
 
 Provide a concise response (under 150 words):
-- Briefly acknowledge what they're looking for
-- Share 1-2 quick TLC tips relevant to their request based on the knowledge above
-- Always include this exact redirect with link: "For detailed lesson plans implementing these strategies, **[click here to open the lesson planner](https://cwla-52a1d.web.app/?open=lesson-planner)**."
-- Mention that the lesson planner now uses the same TLC knowledge base for consistent, research-based lessons
-- Be direct and professional
+- Acknowledge their lesson planning need
+- Share 1-2 specific TLC framework principles (focus on WRITING instruction, the 5 stages, genre-based approach)
+- Include exact redirect: "For detailed lesson plans implementing these TLC strategies, **[click here to open the lesson planner](https://cwla-52a1d.web.app/?open=lesson-planner)**."
+- Mention the lesson planner uses the same TLC knowledge base
 
-IMPORTANT: You must include the clickable markdown link exactly as shown above. Use markdown **bold** for key points. No rambling or overly personal tone.`
+CRITICAL: Never mention "4 phases" or incorrect stage names. Always emphasize TLC's focus on writing instruction.`
         });
 
         const response = await anthropic.messages.create({
@@ -155,20 +154,36 @@ IMPORTANT: You must include the clickable markdown link exactly as shown above. 
       // ========== SIMPLIFIED FAST PROMPT ==========
       console.log(`[${new Date().toISOString()}] FrameworkLearningService - Building simplified prompt`);
       
-      const prompt = `You are a professional TLC (Teaching and Learning Cycle) framework expert. Provide direct, concise help to primary teachers.
+      const prompt = `You are a TLC (Teaching and Learning Cycle) framework expert based on Beverly Derewianka's research. You MUST only provide information from the knowledge base provided.
 
 Teacher's question: "${userInput}"
 
+**CRITICAL REQUIREMENTS:**
+- ONLY use information from the TLC knowledge base - never invent or assume
+- TLC has exactly 5 stages: Building Field → Supported Reading → Learning Genre → Supported Writing → Independent Writing
+- TLC is fundamentally about improving WRITING across curriculum areas, not general teaching
+- If asked about stages, always reference the correct 5 stages with proper names and percentages
+- Never describe TLC as having 4 phases or use incorrect stage names
+- If the knowledge base doesn't contain specific information, say "The TLC framework doesn't specify this" rather than guessing
+
+**KNOWLEDGE BASE SUMMARY:**
+Core principle: ${kb.core_tlc_principles.fundamental_approach}
+5 Stages: ${kb.topics.find(t => t.id === 'tlc_stages_detailed')?.content ? Object.keys(kb.topics.find(t => t.id === 'tlc_stages_detailed').content).map(key => {
+  const stage = kb.topics.find(t => t.id === 'tlc_stages_detailed').content[key];
+  return stage.title || key;
+}).join(' → ') : 'Building Field → Supported Reading → Learning Genre → Supported Writing → Independent Writing'}
 
 **RESPONSE GUIDELINES:**
-- Be professional, direct, and concise
-- NO emojis or overly casual language
-- Focus on practical TLC implementation
+- Be professional and direct
+- Reference specific knowledge base content
 - Use British spelling
-- Ask 1-2 strategic questions if helpful
 - Use markdown **bold** for key points
+- If unsure, acknowledge knowledge base limitations
 
-Available topics: ${kb.topics.map(topic => topic.title).join(', ')}`
+Available knowledge: ${kb.topics.map(topic => topic.title).join(', ')}
+
+**DETAILED TLC STAGES (from knowledge base):**
+${JSON.stringify(kb.topics.find(t => t.id === 'tlc_stages_detailed')?.content || {}, null, 2)}`
 
       // Build messages array with conversation history + system prompt
       const messages = conversationHistory.map(msg => ({
