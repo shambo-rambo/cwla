@@ -167,11 +167,8 @@ Teacher's question: "${userInput}"
 - If the knowledge base doesn't contain specific information, say "The TLC framework doesn't specify this" rather than guessing
 
 **KNOWLEDGE BASE SUMMARY:**
-Core principle: ${kb.core_tlc_principles.fundamental_approach}
-5 Stages: ${kb.topics.find(t => t.id === 'tlc_stages_detailed')?.content ? Object.keys(kb.topics.find(t => t.id === 'tlc_stages_detailed').content).map(key => {
-  const stage = kb.topics.find(t => t.id === 'tlc_stages_detailed').content[key];
-  return stage.title || key;
-}).join(' → ') : 'Building Field → Supported Reading → Learning Genre → Supported Writing → Independent Writing'}
+Core principle: ${kb.core_tlc_principles?.fundamental_approach || 'TLC is fundamentally about improving writing across all curriculum areas'}
+5 Stages: Building Field → Supported Reading → Learning Genre → Supported Writing → Independent Writing
 
 **RESPONSE GUIDELINES:**
 - Be professional and direct
@@ -180,10 +177,16 @@ Core principle: ${kb.core_tlc_principles.fundamental_approach}
 - Use markdown **bold** for key points
 - If unsure, acknowledge knowledge base limitations
 
-Available knowledge: ${kb.topics.map(topic => topic.title).join(', ')}
+Available knowledge: ${kb.topics?.map(topic => topic.title).join(', ') || 'TLC framework stages and principles'}
 
 **DETAILED TLC STAGES (from knowledge base):**
-${JSON.stringify(kb.topics.find(t => t.id === 'tlc_stages_detailed')?.content || {}, null, 2)}`
+${JSON.stringify(kb.topics?.find(t => t.id === 'tlc_stages_detailed')?.content || {
+  "stage_1": "Building Knowledge of the Field (15-20% of time)",
+  "stage_2": "Supported Reading - The Reading-Writing Connection", 
+  "stage_3": "Learning About the Genre (25-30% of time)",
+  "stage_4": "Supported Writing (30-35% of time)",
+  "stage_5": "Independent Writing (20-25% of time)"
+}, null, 2)}`
 
       // Build messages array with conversation history + system prompt
       const messages = conversationHistory.map(msg => ({
